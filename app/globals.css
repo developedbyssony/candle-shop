@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+:root {
+  --color-cream: #faf8f4;
+  --color-beige: #f0ebe0;
+  --color-sand: #e8dfd0;
+  --color-sage: #8a9e8a;
+  --color-sage-dark: #6e826e;
+  --color-brown: #6b5744;
+  --color-text: #2c2c2c;
+  --color-muted: #7c7c7c;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--color-cream);
+  color: var(--color-text);
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
