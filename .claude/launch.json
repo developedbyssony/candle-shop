@@ -11,6 +11,13 @@
       "name": "candle-shop-attach",
       "url": "http://localhost:3000",
       "port": 3000
+    },
+    {
+      "name": "candle-shop-prod",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start"],
+      "port": 3100,
+      "autoPort": true
     }
   ]
 }
