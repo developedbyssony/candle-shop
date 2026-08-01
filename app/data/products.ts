@@ -49,4 +49,12 @@ export const products: Product[] = [
     image: "https://images.unsplash.com/photo-1733945316613-e603334423dc?w=600&h=700&fit=crop&crop=entropy&q=85",
     description: "시원하고 청량한 민트 향이 집안을 상쾌하게 만들어주는 캔들",
   },
+  {
+    id: 7,
+    name: "치즈 한 조각",
+    price: 21000,
+    scent: "밀크",
+    image: "/products/cheese-candle.jpg",
+    description: "포근한 밀크 향이 감도는, 치즈 한 조각을 닮은 핸드메이드 오브제 캔들",
+  },
 ];
