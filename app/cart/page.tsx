@@ -5,9 +5,11 @@ import Image from "next/image";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 import { useCart } from "@/app/context/CartContext";
+import { FREE_SHIPPING_THRESHOLD, getShippingFee } from "@/app/lib/checkout";
 
 export default function CartPage() {
   const { cart, removeFromCart, updateQuantity, totalPrice } = useCart();
+  const shippingFee = getShippingFee(totalPrice);
 
   return (
     <>
@@ -98,20 +100,44 @@ export default function CartPage() {
                 border: "1px solid var(--color-sand)",
               }}
             >
-              <div className="flex justify-between items-center mb-5">
+              <div className="space-y-2.5 text-sm mb-4">
+                <div className="flex justify-between">
+                  <span style={{ color: "var(--color-muted)" }}>상품 금액</span>
+                  <span style={{ color: "var(--color-text)" }}>
+                    {totalPrice.toLocaleString()}원
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span style={{ color: "var(--color-muted)" }}>배송비</span>
+                  <span style={{ color: "var(--color-text)" }}>
+                    {shippingFee === 0 ? "무료" : `${shippingFee.toLocaleString()}원`}
+                  </span>
+                </div>
+                {shippingFee > 0 && (
+                  <p className="text-[11px]" style={{ color: "var(--color-sage-dark)" }}>
+                    {(FREE_SHIPPING_THRESHOLD - totalPrice).toLocaleString()}원 더 담으면
+                    무료배송이에요
+                  </p>
+                )}
+              </div>
+              <div
+                className="flex justify-between items-center mb-5 pt-4"
+                style={{ borderTop: "1px solid var(--color-sand)" }}
+              >
                 <span className="text-sm" style={{ color: "var(--color-muted)" }}>
                   총 결제 금액
                 </span>
                 <span className="text-lg font-semibold" style={{ color: "var(--color-text)" }}>
-                  {totalPrice.toLocaleString()}원
+                  {(totalPrice + shippingFee).toLocaleString()}원
                 </span>
               </div>
-              <button
-                className="w-full py-3.5 rounded-full text-sm font-medium transition-opacity hover:opacity-80"
+              <Link
+                href="/checkout"
+                className="block text-center w-full py-3.5 rounded-full text-sm font-medium transition-opacity hover:opacity-80"
                 style={{ background: "var(--color-sage)", color: "#fff" }}
               >
                 주문하기
-              </button>
+              </Link>
             </div>
           </>
         )}
