@@ -62,6 +62,38 @@ let cartItems: CartItem[] = EMPTY;
 let restored = false;
 const listeners = new Set<() => void>();
 
+/** 파일명이 바뀐 상품 이미지. 예전 경로 그대로면 장바구니에서 이미지가 깨집니다. */
+const RENAMED_IMAGES: Record<string, string> = {
+  // 그림자를 지우면서 캐시를 확실히 비우려고 파일명을 바꿨습니다.
+  "/products/cheese-candle.png": "/products/cheese-candle-v2.png",
+};
+
+/**
+ * 색상 필터 id가 상품별로 나뉘기 전에 담긴 항목(url(#candle-color-red) 형태).
+ * 당시 색상이 있는 상품은 치즈 캔들뿐이라 cheese로 보냅니다.
+ * 새 id(candle-color-cheese-red)는 색상 자리에 하이픈이 있어 걸리지 않습니다.
+ */
+const LEGACY_FILTER = /^url\(#candle-color-([a-z]+)\)$/;
+
+/**
+ * 장바구니에는 담을 당시의 상품 정보가 통째로 저장됩니다.
+ * 그래서 이미지 파일명이나 필터 id가 바뀌면 예전 항목이 깨진 값을 들고 있어,
+ * 불러올 때 지금 구조에 맞게 고쳐줍니다.
+ */
+function migrate(item: CartItem): CartItem {
+  // 색상 옵션 도입 전에 담아둔 장바구니에는 key가 없어 여기서 채워줍니다.
+  const key = item.key ?? cartKey(item.id, item.color?.id);
+  const image = RENAMED_IMAGES[item.image] ?? item.image;
+
+  let color = item.color;
+  const legacy = color?.filter?.match(LEGACY_FILTER);
+  if (color && legacy) {
+    color = { ...color, filter: `url(#candle-color-cheese-${legacy[1]})` };
+  }
+
+  return { ...item, key, image, color };
+}
+
 function restore() {
   if (restored) return;
   restored = true;
@@ -69,10 +101,7 @@ function restore() {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (!saved) return;
     const parsed = JSON.parse(saved) as CartItem[];
-    // 색상 옵션 도입 전에 담아둔 장바구니에는 key가 없어 여기서 채워줍니다.
-    cartItems = parsed.map((item) =>
-      item.key ? item : { ...item, key: cartKey(item.id, item.color?.id) }
-    );
+    cartItems = parsed.map(migrate);
   } catch {
     // 저장된 값이 깨졌으면 빈 장바구니로 시작합니다.
   }
