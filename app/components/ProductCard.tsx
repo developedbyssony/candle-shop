@@ -23,10 +23,10 @@ export default function ProductCard({ product }: { product: Product }) {
 
   return (
     <div
-      className="rounded-2xl overflow-hidden transition-shadow hover:shadow-md"
+      className="rounded-2xl overflow-hidden transition-shadow hover:shadow-md flex flex-col h-full"
       style={{ background: "#fff", border: "1px solid var(--color-sand)" }}
     >
-      <div className="relative h-52 w-full">
+      <div className="relative h-52 w-full shrink-0">
         <Image
           src={product.image}
           alt={
@@ -37,10 +37,10 @@ export default function ProductCard({ product }: { product: Product }) {
           fill
           className="object-cover"
           style={{ filter: selectedColor?.filter }}
-          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
         />
       </div>
-      <div className="p-4">
+      <div className="p-4 flex flex-col flex-1">
         <div className="flex items-start justify-between gap-2 mb-1">
           <h3 className="font-semibold text-sm" style={{ color: "var(--color-text)" }}>
             {product.name}
@@ -90,7 +90,7 @@ export default function ProductCard({ product }: { product: Product }) {
             </div>
           </div>
         )}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mt-auto">
           <span className="font-semibold text-sm" style={{ color: "var(--color-text)" }}>
             {product.price.toLocaleString()}원
           </span>

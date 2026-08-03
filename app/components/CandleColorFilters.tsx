@@ -14,9 +14,38 @@ export default function CandleColorFilters() {
       style={{ position: "absolute", width: 0, height: 0 }}
     >
       <defs>
-        {CANDLE_COLOR_FILTERS.map(({ id, matrix }) => (
+        {CANDLE_COLOR_FILTERS.map(({ id, matrix, maskMatrix }) => (
           <filter key={id} id={id} colorInterpolationFilters="sRGB">
-            <feColorMatrix type="matrix" values={matrix} />
+            {maskMatrix ? (
+              <>
+                {/* 본체만 알파 1인 마스크를 만들어, 색을 바꾼 결과를 그 안에만 남기고
+                    원본 위에 얹습니다. 마스크 밖(끈·배경·그림자)은 원본 그대로입니다. */}
+                <feColorMatrix
+                  in="SourceGraphic"
+                  type="matrix"
+                  values={maskMatrix}
+                  result="bodyMask"
+                />
+                <feColorMatrix
+                  in="SourceGraphic"
+                  type="matrix"
+                  values={matrix}
+                  result="recolored"
+                />
+                <feComposite
+                  in="recolored"
+                  in2="bodyMask"
+                  operator="in"
+                  result="bodyOnly"
+                />
+                <feMerge>
+                  <feMergeNode in="SourceGraphic" />
+                  <feMergeNode in="bodyOnly" />
+                </feMerge>
+              </>
+            ) : (
+              <feColorMatrix type="matrix" values={matrix} />
+            )}
           </filter>
         ))}
       </defs>
