@@ -2,11 +2,14 @@ import { products } from "@/app/data/products";
 import { getShippingFee, type PaymentMethodId } from "@/app/lib/checkout";
 
 export type OrderItem = {
+  /** 같은 상품이라도 색상이 다르면 다른 항목이므로 상품번호 대신 이 값을 씁니다. */
+  key: string;
   id: number;
   name: string;
   price: number;
   image: string;
   quantity: number;
+  color?: { id: string; label: string; swatch: string; filter?: string };
 };
 
 export type Orderer = {
@@ -32,8 +35,8 @@ export type Order = {
   status: "paid";
 };
 
-/** 장바구니에서 넘어온 항목 (수량만 신뢰하고 가격은 서버에서 다시 계산) */
-export type CartRef = { id: number; quantity: number };
+/** 장바구니에서 넘어온 항목 (수량만 신뢰하고 가격·색상은 서버에서 다시 조회) */
+export type CartRef = { id: number; colorId?: string; quantity: number };
 
 /**
  * 데모용 인메모리 주문 저장소.
@@ -76,12 +79,20 @@ export function buildOrderItems(refs: CartRef[]): OrderItem[] {
     const quantity = Math.floor(ref.quantity);
     if (!Number.isFinite(quantity) || quantity < 1 || quantity > 99) continue;
 
+    // 색상은 서버 데이터에서 다시 찾고, 없는 색상이 넘어오면 기본 색상으로 처리합니다.
+    const color = product.colors
+      ? product.colors.find((option) => option.id === ref.colorId) ??
+        product.colors[0]
+      : undefined;
+
     items.push({
+      key: color ? `${product.id}:${color.id}` : String(product.id),
       id: product.id,
       name: product.name,
       price: product.price,
       image: product.image,
       quantity,
+      color,
     });
   }
 

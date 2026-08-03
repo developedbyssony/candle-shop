@@ -29,9 +29,15 @@ function parseCartRefs(raw: string): CartRef[] {
 
     return parsed.flatMap((entry) => {
       if (typeof entry !== "object" || entry === null) return [];
-      const { id, quantity } = entry as Record<string, unknown>;
+      const { id, colorId, quantity } = entry as Record<string, unknown>;
       if (typeof id !== "number" || typeof quantity !== "number") return [];
-      return [{ id, quantity }];
+      return [
+        {
+          id,
+          colorId: typeof colorId === "string" ? colorId : undefined,
+          quantity,
+        },
+      ];
     });
   } catch {
     return [];

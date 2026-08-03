@@ -1,4 +1,5 @@
 import { Product } from "@/app/context/CartContext";
+import { CANDLE_COLORS } from "@/app/data/candleColors";
 
 export const products: Product[] = [
   {
@@ -54,7 +55,10 @@ export const products: Product[] = [
     name: "치즈 한 조각",
     price: 21000,
     scent: "밀크",
-    image: "/products/cheese-candle.jpg",
+    image: "/products/cheese-candle.png",
     description: "포근한 밀크 향이 감도는, 치즈 한 조각을 닮은 핸드메이드 오브제 캔들",
+    colors: CANDLE_COLORS,
+    // 상품 사진 그대로인 노랑을 기본으로 보여줍니다.
+    defaultColorId: "yellow",
   },
 ];

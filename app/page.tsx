@@ -11,7 +11,7 @@ export default function Home() {
   return (
     <>
       <Navbar />
-      <main>
+      <main className="w-full">
         {/* Hero — 풀스크린 이미지 + 텍스트 오버레이 */}
         <section className="relative h-[85vh] min-h-[500px] flex items-center justify-center overflow-hidden">
           <Image
