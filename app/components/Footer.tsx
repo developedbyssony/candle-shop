@@ -35,7 +35,7 @@ export default function Footer() {
           </p>
           <p>대표 : 장효진 &nbsp;|&nbsp; 사업자등록번호 : 588-39-01080</p>
           <p>주소 : 서울시 노원구 노원로 30길-32 중앙하이츠빌라 103동 501호</p>
-          <p>고객센터 : 0506-503-5123</p>
+          <p>고객센터 : 050-6503-5123</p>
           <p className="mt-3">© 2025 Evening Candle. All rights reserved.</p>
         </div>
       </div>
