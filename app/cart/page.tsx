@@ -14,7 +14,7 @@ export default function CartPage() {
   return (
     <>
       <Navbar />
-      <main className="max-w-2xl mx-auto px-5 py-12">
+      <main className="w-full max-w-2xl mx-auto px-5 py-12">
         <h1 className="text-xl font-semibold mb-8" style={{ color: "var(--color-text)" }}>
           장바구니
         </h1>
@@ -36,59 +36,98 @@ export default function CartPage() {
             <div className="space-y-3 mb-6">
               {cart.map((item) => (
                 <div
-                  key={item.id}
-                  className="flex items-center gap-3 rounded-2xl p-4"
+                  key={item.key}
+                  className="flex items-start gap-3 rounded-2xl p-4"
                   style={{
                     background: "#fff",
                     border: "1px solid var(--color-sand)",
                   }}
                 >
-                  <div className="relative rounded-xl w-14 h-14 overflow-hidden shrink-0">
+                  <div className="relative rounded-xl w-16 h-16 overflow-hidden shrink-0">
                     <Image
                       src={item.image}
                       alt={item.name}
                       fill
                       className="object-cover"
-                      sizes="56px"
+                      style={{ filter: item.color?.filter }}
+                      sizes="64px"
                     />
                   </div>
+                  {/* 좁은 모바일 화면에서도 이름이 잘리지 않도록 수량·금액은 아랫줄에 둡니다 */}
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-sm" style={{ color: "var(--color-text)" }}>
-                      {item.name}
-                    </p>
+                    <div className="flex items-start justify-between gap-2">
+                      <p
+                        className="font-medium text-sm"
+                        style={{ color: "var(--color-text)" }}
+                      >
+                        {item.name}
+                      </p>
+                      <button
+                        onClick={() => removeFromCart(item.key)}
+                        aria-label={`${item.name} 삭제`}
+                        className="text-xs shrink-0 leading-none p-1 -m-1"
+                        style={{ color: "var(--color-sand)" }}
+                      >
+                        ✕
+                      </button>
+                    </div>
+                    {item.color && (
+                      <p
+                        className="text-[11px] mt-1 flex items-center gap-1.5"
+                        style={{ color: "var(--color-muted)" }}
+                      >
+                        <span
+                          className="inline-block w-2.5 h-2.5 rounded-full shrink-0"
+                          style={{
+                            background: item.color.swatch,
+                            border: "1px solid rgba(0,0,0,0.08)",
+                          }}
+                        />
+                        {item.color.label}
+                      </p>
+                    )}
                     <p className="text-xs mt-0.5" style={{ color: "var(--color-muted)" }}>
                       {item.price.toLocaleString()}원
                     </p>
+                    <div className="flex items-center justify-between gap-2 mt-2.5">
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => updateQuantity(item.key, item.quantity - 1)}
+                          aria-label="수량 줄이기"
+                          className="w-7 h-7 rounded-full border text-xs transition-colors"
+                          style={{
+                            borderColor: "var(--color-sand)",
+                            color: "var(--color-muted)",
+                          }}
+                        >
+                          −
+                        </button>
+                        <span
+                          className="w-5 text-center text-sm"
+                          style={{ color: "var(--color-text)" }}
+                        >
+                          {item.quantity}
+                        </span>
+                        <button
+                          onClick={() => updateQuantity(item.key, item.quantity + 1)}
+                          aria-label="수량 늘리기"
+                          className="w-7 h-7 rounded-full border text-xs transition-colors"
+                          style={{
+                            borderColor: "var(--color-sand)",
+                            color: "var(--color-muted)",
+                          }}
+                        >
+                          +
+                        </button>
+                      </div>
+                      <p
+                        className="font-semibold text-sm shrink-0"
+                        style={{ color: "var(--color-text)" }}
+                      >
+                        {(item.price * item.quantity).toLocaleString()}원
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                      className="w-6 h-6 rounded-full border text-xs transition-colors"
-                      style={{ borderColor: "var(--color-sand)", color: "var(--color-muted)" }}
-                    >
-                      −
-                    </button>
-                    <span className="w-5 text-center text-sm" style={{ color: "var(--color-text)" }}>
-                      {item.quantity}
-                    </span>
-                    <button
-                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                      className="w-6 h-6 rounded-full border text-xs transition-colors"
-                      style={{ borderColor: "var(--color-sand)", color: "var(--color-muted)" }}
-                    >
-                      +
-                    </button>
-                  </div>
-                  <p className="font-semibold text-sm shrink-0" style={{ color: "var(--color-text)" }}>
-                    {(item.price * item.quantity).toLocaleString()}원
-                  </p>
-                  <button
-                    onClick={() => removeFromCart(item.id)}
-                    className="text-xs shrink-0 ml-1"
-                    style={{ color: "var(--color-sand)" }}
-                  >
-                    ✕
-                  </button>
                 </div>
               ))}
             </div>

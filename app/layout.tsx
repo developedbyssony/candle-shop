@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Providers } from "@/app/providers";
+import CandleColorFilters from "@/app/components/CandleColorFilters";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -21,6 +22,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col" style={{ background: "var(--color-cream)" }}>
+        <CandleColorFilters />
         <Providers>{children}</Providers>
       </body>
     </html>

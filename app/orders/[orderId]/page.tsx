@@ -34,7 +34,7 @@ export default async function OrderCompletePage({
     return (
       <>
         <Navbar />
-        <main className="max-w-md mx-auto px-5 py-24 text-center">
+        <main className="w-full max-w-md mx-auto px-5 py-24 text-center">
           <p className="text-4xl mb-5">🕯️</p>
           <p
             className="text-sm font-medium mb-2"
@@ -63,7 +63,7 @@ export default async function OrderCompletePage({
   return (
     <>
       <Navbar />
-      <main className="max-w-2xl mx-auto px-5 py-12 space-y-5">
+      <main className="w-full max-w-2xl mx-auto px-5 py-12 space-y-5">
         <div className="text-center mb-2">
           <div
             className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center text-2xl"
@@ -112,13 +112,14 @@ export default async function OrderCompletePage({
           </h2>
           <div className="space-y-3">
             {order.items.map((item) => (
-              <div key={item.id} className="flex items-center gap-3">
+              <div key={item.key} className="flex items-center gap-3">
                 <div className="relative rounded-xl w-12 h-12 overflow-hidden shrink-0">
                   <Image
                     src={item.image}
                     alt={item.name}
                     fill
                     className="object-cover"
+                    style={{ filter: item.color?.filter }}
                     sizes="48px"
                   />
                 </div>
@@ -130,6 +131,7 @@ export default async function OrderCompletePage({
                     {item.name}
                   </p>
                   <p className="text-xs mt-0.5" style={{ color: "var(--color-muted)" }}>
+                    {item.color && `${item.color.label} · `}
                     {item.quantity}개
                   </p>
                 </div>

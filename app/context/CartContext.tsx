@@ -9,6 +9,14 @@ import {
 
 const STORAGE_KEY = "candle-shop-cart";
 
+/** 같은 캔들의 색상 옵션. 사진이 한 장이라 미리보기는 CSS 필터로 색을 입힙니다. */
+export type ProductColor = {
+  id: string;
+  label: string;
+  swatch: string;
+  filter?: string;
+};
+
 export type Product = {
   id: number;
   name: string;
@@ -16,15 +24,27 @@ export type Product = {
   scent: string;
   image: string;
   description: string;
+  colors?: ProductColor[];
+  /** 처음 선택된 색상. 없으면 colors의 첫 번째를 씁니다. */
+  defaultColorId?: string;
 };
 
-type CartItem = Product & { quantity: number };
+/** 같은 상품이라도 색상이 다르면 장바구니에서 별도 항목으로 담깁니다. */
+export type CartItem = Product & {
+  key: string;
+  quantity: number;
+  color?: ProductColor;
+};
+
+export function cartKey(productId: number, colorId?: string) {
+  return colorId ? `${productId}:${colorId}` : String(productId);
+}
 
 type CartContextType = {
   cart: CartItem[];
-  addToCart: (product: Product) => void;
-  removeFromCart: (id: number) => void;
-  updateQuantity: (id: number, quantity: number) => void;
+  addToCart: (product: Product, color?: ProductColor) => void;
+  removeFromCart: (key: string) => void;
+  updateQuantity: (key: string, quantity: number) => void;
   clearCart: () => void;
   totalCount: number;
   totalPrice: number;
@@ -47,7 +67,12 @@ function restore() {
   restored = true;
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) cartItems = JSON.parse(saved) as CartItem[];
+    if (!saved) return;
+    const parsed = JSON.parse(saved) as CartItem[];
+    // 색상 옵션 도입 전에 담아둔 장바구니에는 key가 없어 여기서 채워줍니다.
+    cartItems = parsed.map((item) =>
+      item.key ? item : { ...item, key: cartKey(item.id, item.color?.id) }
+    );
   } catch {
     // 저장된 값이 깨졌으면 빈 장바구니로 시작합니다.
   }
@@ -78,31 +103,30 @@ function setCart(updater: (prev: CartItem[]) => CartItem[]) {
 }
 
 // 함수 참조가 렌더마다 바뀌지 않도록 컴포넌트 밖에 둡니다.
-function addToCart(product: Product) {
+function addToCart(product: Product, color?: ProductColor) {
+  const key = cartKey(product.id, color?.id);
   setCart((prev) => {
-    const existing = prev.find((item) => item.id === product.id);
+    const existing = prev.find((item) => item.key === key);
     if (existing) {
       return prev.map((item) =>
-        item.id === product.id
-          ? { ...item, quantity: item.quantity + 1 }
-          : item
+        item.key === key ? { ...item, quantity: item.quantity + 1 } : item
       );
     }
-    return [...prev, { ...product, quantity: 1 }];
+    return [...prev, { ...product, key, color, quantity: 1 }];
   });
 }
 
-function removeFromCart(id: number) {
-  setCart((prev) => prev.filter((item) => item.id !== id));
+function removeFromCart(key: string) {
+  setCart((prev) => prev.filter((item) => item.key !== key));
 }
 
-function updateQuantity(id: number, quantity: number) {
+function updateQuantity(key: string, quantity: number) {
   if (quantity <= 0) {
-    removeFromCart(id);
+    removeFromCart(key);
     return;
   }
   setCart((prev) =>
-    prev.map((item) => (item.id === id ? { ...item, quantity } : item))
+    prev.map((item) => (item.key === key ? { ...item, quantity } : item))
   );
 }
 

@@ -7,7 +7,7 @@ export default function ProductsPage() {
   return (
     <>
       <Navbar />
-      <main className="max-w-5xl mx-auto px-5 py-12">
+      <main className="w-full max-w-5xl mx-auto px-5 py-12">
         <div className="text-center mb-10">
           <p
             className="text-xs tracking-[0.3em] mb-2 font-medium"

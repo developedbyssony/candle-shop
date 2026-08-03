@@ -78,7 +78,7 @@ export default function CheckoutPage() {
     return (
       <>
         <Navbar />
-        <main className="max-w-md mx-auto px-5 py-24 text-center">
+        <main className="w-full max-w-md mx-auto px-5 py-24 text-center">
           <p className="text-4xl mb-4">🕯️</p>
           <p className="text-sm" style={{ color: "var(--color-muted)" }}>
             결제가 완료되었어요. 주문서로 이동 중입니다…
@@ -93,7 +93,7 @@ export default function CheckoutPage() {
     return (
       <>
         <Navbar />
-        <main className="max-w-md mx-auto px-5 py-24 text-center">
+        <main className="w-full max-w-md mx-auto px-5 py-24 text-center">
           <p className="text-4xl mb-5">🕯️</p>
           <p className="text-sm mb-6" style={{ color: "var(--color-muted)" }}>
             주문할 상품이 없어요
@@ -114,7 +114,7 @@ export default function CheckoutPage() {
   return (
     <>
       <Navbar />
-      <main className="max-w-2xl mx-auto px-5 py-10 pb-32">
+      <main className="w-full max-w-2xl mx-auto px-5 py-10 pb-32">
         <h1
           className="text-xl font-semibold mb-8"
           style={{ color: "var(--color-text)" }}
@@ -123,12 +123,16 @@ export default function CheckoutPage() {
         </h1>
 
         <form action={formAction} className="space-y-5">
-          {/* 서버에서 가격을 다시 계산하므로 상품 번호와 수량만 보냅니다 */}
+          {/* 서버에서 가격을 다시 계산하므로 상품 번호·색상·수량만 보냅니다 */}
           <input
             type="hidden"
             name="items"
             value={JSON.stringify(
-              cart.map((item) => ({ id: item.id, quantity: item.quantity }))
+              cart.map((item) => ({
+                id: item.id,
+                colorId: item.color?.id,
+                quantity: item.quantity,
+              }))
             )}
           />
 
@@ -142,13 +146,14 @@ export default function CheckoutPage() {
             </h2>
             <div className="space-y-3">
               {cart.map((item) => (
-                <div key={item.id} className="flex items-center gap-3">
+                <div key={item.key} className="flex items-center gap-3">
                   <div className="relative rounded-xl w-12 h-12 overflow-hidden shrink-0">
                     <Image
                       src={item.image}
                       alt={item.name}
                       fill
                       className="object-cover"
+                      style={{ filter: item.color?.filter }}
                       sizes="48px"
                     />
                   </div>
@@ -163,6 +168,7 @@ export default function CheckoutPage() {
                       className="text-xs mt-0.5"
                       style={{ color: "var(--color-muted)" }}
                     >
+                      {item.color && `${item.color.label} · `}
                       {item.price.toLocaleString()}원 · {item.quantity}개
                     </p>
                   </div>
