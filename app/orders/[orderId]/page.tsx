@@ -45,11 +45,7 @@ export default async function OrderCompletePage({
           <p className="text-xs mb-6" style={{ color: "var(--color-muted)" }}>
             주문번호를 다시 확인해주세요
           </p>
-          <Link
-            href="/products"
-            className="inline-block text-sm px-7 py-2.5 rounded-full font-medium"
-            style={{ background: "var(--color-sage)", color: "#fff" }}
-          >
+          <Link href="/products" className="btn-outline">
             상품 보러가기
           </Link>
         </main>
@@ -73,7 +69,7 @@ export default async function OrderCompletePage({
           </div>
           <h1
             className="text-xl font-semibold mb-1.5"
-            style={{ color: "var(--color-text)" }}
+            style={{ color: "var(--color-ink)" }}
           >
             결제가 완료되었어요
           </h1>
@@ -82,7 +78,7 @@ export default async function OrderCompletePage({
           </p>
         </div>
 
-        <section className="rounded-2xl p-5 space-y-2.5 text-sm" style={cardStyle}>
+        <section className="p-5 space-y-2.5 text-sm" style={cardStyle}>
           <div className="flex justify-between">
             <span style={{ color: "var(--color-muted)" }}>주문번호</span>
             <span className="font-medium" style={{ color: "var(--color-text)" }}>
@@ -103,7 +99,7 @@ export default async function OrderCompletePage({
           </div>
         </section>
 
-        <section className="rounded-2xl p-5" style={cardStyle}>
+        <section className="p-5" style={cardStyle}>
           <h2
             className="text-sm font-semibold mb-4"
             style={{ color: "var(--color-text)" }}
@@ -113,7 +109,7 @@ export default async function OrderCompletePage({
           <div className="space-y-3">
             {order.items.map((item) => (
               <div key={item.key} className="flex items-center gap-3">
-                <div className="relative rounded-xl w-12 h-12 overflow-hidden shrink-0">
+                <div className="relative w-12 h-12 overflow-hidden shrink-0">
                   <Image
                     src={item.image}
                     alt={item.name}
@@ -167,17 +163,15 @@ export default async function OrderCompletePage({
               <span className="font-medium" style={{ color: "var(--color-text)" }}>
                 총 결제 금액
               </span>
-              <span
-                className="text-lg font-semibold"
-                style={{ color: "var(--color-text)" }}
-              >
-                {order.total.toLocaleString()}원
+              <span className="font-display text-xl" style={{ color: "var(--color-ink)" }}>
+                {order.total.toLocaleString()}
+                <span className="text-sm ml-0.5">원</span>
               </span>
             </div>
           </div>
         </section>
 
-        <section className="rounded-2xl p-5" style={cardStyle}>
+        <section className="p-5" style={cardStyle}>
           <h2
             className="text-sm font-semibold mb-4"
             style={{ color: "var(--color-text)" }}
@@ -203,22 +197,10 @@ export default async function OrderCompletePage({
         </section>
 
         <div className="flex gap-2.5 pt-2">
-          <Link
-            href="/products"
-            className="flex-1 text-center text-sm py-3.5 rounded-full font-medium"
-            style={{ background: "var(--color-sage)", color: "#fff" }}
-          >
+          <Link href="/products" className="btn-solid flex-1">
             쇼핑 계속하기
           </Link>
-          <Link
-            href="/"
-            className="flex-1 text-center text-sm py-3.5 rounded-full font-medium"
-            style={{
-              background: "#fff",
-              border: "1px solid var(--color-sand)",
-              color: "var(--color-text)",
-            }}
-          >
+          <Link href="/" className="btn-outline flex-1">
             홈으로
           </Link>
         </div>

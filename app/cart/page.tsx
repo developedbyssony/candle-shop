@@ -15,19 +15,18 @@ export default function CartPage() {
     <>
       <Navbar />
       <main className="w-full max-w-2xl mx-auto px-5 py-12">
-        <h1 className="text-xl font-semibold mb-8" style={{ color: "var(--color-text)" }}>
-          장바구니
-        </h1>
+        <div className="mb-10">
+          <p className="eyebrow mb-2.5">Cart</p>
+          <h1 className="font-display text-3xl" style={{ color: "var(--color-ink)" }}>
+            장바구니
+          </h1>
+        </div>
 
         {cart.length === 0 ? (
           <div className="text-center py-20" style={{ color: "var(--color-muted)" }}>
             <p className="text-4xl mb-5">🕯️</p>
             <p className="text-sm mb-6">장바구니가 비어있어요</p>
-            <Link
-              href="/products"
-              className="inline-block text-sm px-7 py-2.5 rounded-full font-medium"
-              style={{ background: "var(--color-sage)", color: "#fff" }}
-            >
+            <Link href="/products" className="btn-outline">
               상품 보러가기
             </Link>
           </div>
@@ -37,13 +36,13 @@ export default function CartPage() {
               {cart.map((item) => (
                 <div
                   key={item.key}
-                  className="flex items-start gap-3 rounded-2xl p-4"
+                  className="flex items-start gap-3 p-4"
                   style={{
                     background: "#fff",
                     border: "1px solid var(--color-sand)",
                   }}
                 >
-                  <div className="relative rounded-xl w-16 h-16 overflow-hidden shrink-0">
+                  <div className="relative w-16 h-16 overflow-hidden shrink-0">
                     <Image
                       src={item.image}
                       alt={item.name}
@@ -133,7 +132,7 @@ export default function CartPage() {
             </div>
 
             <div
-              className="rounded-2xl p-5"
+              className="p-5"
               style={{
                 background: "#fff",
                 border: "1px solid var(--color-sand)",
@@ -166,15 +165,12 @@ export default function CartPage() {
                 <span className="text-sm" style={{ color: "var(--color-muted)" }}>
                   총 결제 금액
                 </span>
-                <span className="text-lg font-semibold" style={{ color: "var(--color-text)" }}>
-                  {(totalPrice + shippingFee).toLocaleString()}원
+                <span className="font-display text-xl" style={{ color: "var(--color-ink)" }}>
+                  {(totalPrice + shippingFee).toLocaleString()}
+                  <span className="text-sm ml-0.5">원</span>
                 </span>
               </div>
-              <Link
-                href="/checkout"
-                className="block text-center w-full py-3.5 rounded-full text-sm font-medium transition-opacity hover:opacity-80"
-                style={{ background: "var(--color-sage)", color: "#fff" }}
-              >
+              <Link href="/checkout" className="btn-solid w-full">
                 주문하기
               </Link>
             </div>

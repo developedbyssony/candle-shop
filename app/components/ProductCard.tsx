@@ -22,11 +22,11 @@ export default function ProductCard({ product }: { product: Product }) {
   };
 
   return (
-    <div
-      className="rounded-2xl overflow-hidden transition-shadow hover:shadow-md flex flex-col h-full"
-      style={{ background: "#fff", border: "1px solid var(--color-sand)" }}
-    >
-      <div className="relative h-52 w-full shrink-0">
+    <div className="group flex flex-col h-full">
+      <div
+        className="relative aspect-[4/5] w-full overflow-hidden"
+        style={{ background: "var(--color-beige)" }}
+      >
         <Image
           src={product.image}
           alt={
@@ -35,29 +35,36 @@ export default function ProductCard({ product }: { product: Product }) {
               : product.name
           }
           fill
-          className="object-cover"
+          className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
           style={{ filter: selectedColor?.filter }}
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
         />
+        <span
+          className="absolute top-3 left-3 text-[10px] tracking-[0.18em] uppercase px-2.5 py-1"
+          style={{ background: "rgba(250,248,244,0.9)", color: "var(--color-sage-dark)" }}
+        >
+          {product.scent}
+        </span>
       </div>
-      <div className="p-4 flex flex-col flex-1">
-        <div className="flex items-start justify-between gap-2 mb-1">
-          <h3 className="font-semibold text-sm" style={{ color: "var(--color-text)" }}>
+
+      <div className="pt-5 flex flex-col flex-1">
+        <div className="flex items-baseline justify-between gap-3 mb-2">
+          <h3 className="text-[15px] font-semibold" style={{ color: "var(--color-text)" }}>
             {product.name}
           </h3>
-          <span
-            className="text-[11px] px-2 py-0.5 rounded-full shrink-0"
-            style={{ background: "var(--color-beige)", color: "var(--color-sage-dark)" }}
-          >
-            {product.scent}
+          <span className="font-display text-lg shrink-0" style={{ color: "var(--color-ink)" }}>
+            {product.price.toLocaleString()}
+            <span className="text-xs ml-0.5">원</span>
           </span>
         </div>
-        <p className="text-xs leading-relaxed mb-4" style={{ color: "var(--color-muted)" }}>
+
+        <p className="text-[13px] leading-relaxed mb-5" style={{ color: "var(--color-muted)" }}>
           {product.description}
         </p>
+
         {product.colors && selectedColor && (
-          <div className="mb-4">
-            <p className="text-[11px] mb-2" style={{ color: "var(--color-muted)" }}>
+          <div className="mb-5">
+            <p className="text-[11px] mb-2.5" style={{ color: "var(--color-muted)" }}>
               색상 · <span style={{ color: "var(--color-text)" }}>{selectedColor.label}</span>
             </p>
             <div className="flex flex-wrap gap-1.5">
@@ -72,8 +79,8 @@ export default function ProductCard({ product }: { product: Product }) {
                     aria-pressed={selected}
                     className="w-9 h-9 rounded-full flex items-center justify-center transition-colors"
                     style={{
-                      border: `1.5px solid ${
-                        selected ? "var(--color-sage-dark)" : "transparent"
+                      border: `1px solid ${
+                        selected ? "var(--color-ink)" : "transparent"
                       }`,
                     }}
                   >
@@ -90,18 +97,13 @@ export default function ProductCard({ product }: { product: Product }) {
             </div>
           </div>
         )}
-        <div className="flex items-center justify-between mt-auto">
-          <span className="font-semibold text-sm" style={{ color: "var(--color-text)" }}>
-            {product.price.toLocaleString()}원
-          </span>
-          <button
-            onClick={handleAdd}
-            className="text-xs px-4 py-2 rounded-full transition-all font-medium"
-            style={{ background: added ? "#6b9b6b" : "var(--color-sage)", color: "#fff" }}
-          >
-            {added ? "✓ 담김" : "담기"}
-          </button>
-        </div>
+
+        <button
+          onClick={handleAdd}
+          className={added ? "btn-solid w-full mt-auto" : "btn-outline w-full mt-auto"}
+        >
+          {added ? "✓ 담았습니다" : "장바구니 담기"}
+        </button>
       </div>
     </div>
   );
