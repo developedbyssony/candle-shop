@@ -46,7 +46,7 @@ function Field({
 }
 
 const inputClass =
-  "w-full text-sm rounded-xl px-3.5 py-3 outline-none transition-colors focus:border-[var(--color-sage)]";
+  "w-full text-sm px-3.5 py-3 outline-none transition-colors focus:border-[var(--color-ink)]";
 const inputStyle = {
   background: "var(--color-cream)",
   border: "1px solid var(--color-sand)",
@@ -98,11 +98,7 @@ export default function CheckoutPage() {
           <p className="text-sm mb-6" style={{ color: "var(--color-muted)" }}>
             주문할 상품이 없어요
           </p>
-          <Link
-            href="/products"
-            className="inline-block text-sm px-7 py-2.5 rounded-full font-medium"
-            style={{ background: "var(--color-sage)", color: "#fff" }}
-          >
+          <Link href="/products" className="btn-outline">
             상품 보러가기
           </Link>
         </main>
@@ -115,12 +111,12 @@ export default function CheckoutPage() {
     <>
       <Navbar />
       <main className="w-full max-w-2xl mx-auto px-5 py-10 pb-32">
-        <h1
-          className="text-xl font-semibold mb-8"
-          style={{ color: "var(--color-text)" }}
-        >
-          주문 · 결제
-        </h1>
+        <div className="mb-8">
+          <p className="eyebrow mb-2.5">Checkout</p>
+          <h1 className="font-display text-3xl" style={{ color: "var(--color-ink)" }}>
+            주문 · 결제
+          </h1>
+        </div>
 
         <form action={formAction} className="space-y-5">
           {/* 서버에서 가격을 다시 계산하므로 상품 번호·색상·수량만 보냅니다 */}
@@ -137,7 +133,7 @@ export default function CheckoutPage() {
           />
 
           {/* 주문 상품 */}
-          <section className="rounded-2xl p-5" style={cardStyle}>
+          <section className="p-5" style={cardStyle}>
             <h2
               className="text-sm font-semibold mb-4"
               style={{ color: "var(--color-text)" }}
@@ -147,7 +143,7 @@ export default function CheckoutPage() {
             <div className="space-y-3">
               {cart.map((item) => (
                 <div key={item.key} className="flex items-center gap-3">
-                  <div className="relative rounded-xl w-12 h-12 overflow-hidden shrink-0">
+                  <div className="relative w-12 h-12 overflow-hidden shrink-0">
                     <Image
                       src={item.image}
                       alt={item.name}
@@ -189,7 +185,7 @@ export default function CheckoutPage() {
           </section>
 
           {/* 주문자 정보 */}
-          <section className="rounded-2xl p-5 space-y-4" style={cardStyle}>
+          <section className="p-5 space-y-4" style={cardStyle}>
             <h2
               className="text-sm font-semibold"
               style={{ color: "var(--color-text)" }}
@@ -231,7 +227,7 @@ export default function CheckoutPage() {
           </section>
 
           {/* 배송지 */}
-          <section className="rounded-2xl p-5 space-y-4" style={cardStyle}>
+          <section className="p-5 space-y-4" style={cardStyle}>
             <h2
               className="text-sm font-semibold"
               style={{ color: "var(--color-text)" }}
@@ -287,7 +283,7 @@ export default function CheckoutPage() {
           </section>
 
           {/* 결제수단 */}
-          <section className="rounded-2xl p-5" style={cardStyle}>
+          <section className="p-5" style={cardStyle}>
             <h2
               className="text-sm font-semibold mb-4"
               style={{ color: "var(--color-text)" }}
@@ -300,11 +296,11 @@ export default function CheckoutPage() {
                 return (
                   <label
                     key={option.id}
-                    className="rounded-xl px-4 py-3 cursor-pointer transition-colors"
+                    className="px-4 py-3 cursor-pointer transition-colors"
                     style={{
                       background: selected ? "var(--color-beige)" : "var(--color-cream)",
                       border: `1px solid ${
-                        selected ? "var(--color-sage)" : "var(--color-sand)"
+                        selected ? "var(--color-ink)" : "var(--color-sand)"
                       }`,
                     }}
                   >
@@ -319,9 +315,7 @@ export default function CheckoutPage() {
                     <span
                       className="block text-sm font-medium"
                       style={{
-                        color: selected
-                          ? "var(--color-sage-dark)"
-                          : "var(--color-text)",
+                        color: selected ? "var(--color-ink)" : "var(--color-text)",
                       }}
                     >
                       {option.label}
@@ -344,7 +338,7 @@ export default function CheckoutPage() {
           </section>
 
           {/* 결제 금액 */}
-          <section className="rounded-2xl p-5" style={cardStyle}>
+          <section className="p-5" style={cardStyle}>
             <h2
               className="text-sm font-semibold mb-4"
               style={{ color: "var(--color-text)" }}
@@ -377,11 +371,9 @@ export default function CheckoutPage() {
                 <span className="font-medium" style={{ color: "var(--color-text)" }}>
                   총 결제 금액
                 </span>
-                <span
-                  className="text-lg font-semibold"
-                  style={{ color: "var(--color-text)" }}
-                >
-                  {total.toLocaleString()}원
+                <span className="font-display text-xl" style={{ color: "var(--color-ink)" }}>
+                  {total.toLocaleString()}
+                  <span className="text-sm ml-0.5">원</span>
                 </span>
               </div>
             </div>
@@ -408,7 +400,7 @@ export default function CheckoutPage() {
 
           {state.status === "error" && state.message && (
             <p
-              className="text-xs rounded-xl px-4 py-3"
+              className="text-xs px-4 py-3"
               style={{ background: "#f7ece9", color: "#c2705f" }}
             >
               {state.message}
@@ -426,8 +418,7 @@ export default function CheckoutPage() {
             <button
               type="submit"
               disabled={pending}
-              className="block max-w-2xl mx-auto w-full py-3.5 rounded-full text-sm font-medium transition-opacity hover:opacity-80 disabled:opacity-60"
-              style={{ background: "var(--color-sage)", color: "#fff" }}
+              className="btn-solid max-w-2xl mx-auto w-full py-3.5 disabled:opacity-60"
             >
               {pending
                 ? "결제 진행 중…"
