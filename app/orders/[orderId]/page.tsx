@@ -117,7 +117,19 @@ export default async function OrderCompletePage({
                     className="object-cover"
                     style={{ filter: item.color?.filter }}
                     sizes="48px"
+                    quality={98}
                   />
+                  {item.wickImage && (
+                    <Image
+                      src={item.wickImage}
+                      alt=""
+                      aria-hidden
+                      fill
+                      className="object-cover"
+                      sizes="48px"
+                      quality={98}
+                    />
+                  )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p

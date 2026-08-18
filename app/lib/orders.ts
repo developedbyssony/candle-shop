@@ -8,6 +8,7 @@ export type OrderItem = {
   name: string;
   price: number;
   image: string;
+  wickImage?: string;
   quantity: number;
   color?: { id: string; label: string; swatch: string; filter?: string };
 };
@@ -91,6 +92,7 @@ export function buildOrderItems(refs: CartRef[]): OrderItem[] {
       name: product.name,
       price: product.price,
       image: product.image,
+      wickImage: product.wickImage,
       quantity,
       color,
     });

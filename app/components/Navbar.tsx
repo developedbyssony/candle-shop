@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useCart } from "@/app/context/CartContext";
 import { usePathname } from "next/navigation";
 
@@ -14,44 +14,47 @@ const links = [
   { href: "/cart", label: "장바구니" },
 ];
 
+/** 로고 앞에 붙는 캔들 심볼. 글자 색을 그대로 따라갑니다. */
+function CandleMark({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className={className}
+      aria-hidden="true"
+    >
+      {/* 불꽃 — 위는 뾰족하게, 아래는 반원으로 */}
+      <path d="M12 2c.8 2.2 2 3.1 2 4.6a2 2 0 0 1-4 0C10 5.1 11.2 4.2 12 2z" />
+      {/* 심지 */}
+      <path d="M11.6 8.3h.8v1.5h-.8z" />
+      {/* 몸통 — 기둥형 캔들 비율 */}
+      <path d="M10.4 9.6h3.2a1.2 1.2 0 0 1 1.2 1.2v9.9a1.2 1.2 0 0 1-1.2 1.2h-3.2a1.2 1.2 0 0 1-1.2-1.2v-9.9a1.2 1.2 0 0 1 1.2-1.2z" />
+    </svg>
+  );
+}
+
 export default function Navbar() {
   const { totalCount } = useCart();
   const pathname = usePathname();
   // 메뉴 안의 링크는 각각 클릭 시 메뉴를 닫습니다.
   const [open, setOpen] = useState(false);
-  const [atTop, setAtTop] = useState(true);
-  const isHome = pathname === "/";
 
-  // 홈 최상단에서만 배경을 비웁니다. 스크롤하면 다시 채워 글씨가 묻히지 않게 합니다.
-  useEffect(() => {
-    if (!isHome) return;
-    const onScroll = () => setAtTop(window.scrollY < 24);
-    const frame = requestAnimationFrame(onScroll);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", onScroll);
-    };
-  }, [isHome]);
-
-  // 모바일 히어로 사진 위에 겹칠 때만 투명 + 흰 글씨입니다.
-  const overHero = isHome && atTop && !open;
-  // 스크롤 후에는 모바일에서 아이보리 반투명 + 블러로 은은하게 깔고 글씨는 검게 둡니다.
+  // 아이보리 반투명 + 블러를 항상 깔고 글씨는 검게 둡니다.
   // 메뉴를 펼쳤을 때만 메뉴 항목이 읽히도록 불투명도를 올립니다.
-  const scrolledSurface = open
+  const surface = open
     ? "bg-[rgba(250,248,244,0.96)] border-[color:var(--color-sand)] backdrop-blur-md"
     : "bg-[rgba(250,248,244,0.72)] border-[rgba(232,223,208,0.7)] backdrop-blur-md md:bg-[rgba(250,248,244,0.94)] md:border-[color:var(--color-sand)] md:backdrop-blur-sm";
-  const surface = overHero
-    ? "bg-transparent border-transparent md:bg-[rgba(250,248,244,0.94)] md:border-[color:var(--color-sand)] md:backdrop-blur-sm"
-    : scrolledSurface;
-  const markColor = overHero
-    ? "text-white md:text-[color:var(--color-ink)]"
-    : "text-[color:var(--color-ink)]";
+  const markColor = "text-[color:var(--color-ink)]";
 
   return (
     <nav className={`sticky top-0 z-50 border-b transition-colors duration-300 ${surface}`}>
       <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between gap-4">
-        <Link href="/" className={`font-display text-xl md:text-2xl shrink-0 ${markColor}`}>
+        <Link
+          href="/"
+          // 대문자는 소문자보다 커 보여서 크기를 한 단계 낮추고 자간을 살짝 벌립니다.
+          className={`font-display uppercase tracking-[0.06em] text-[17px] md:text-xl shrink-0 flex items-center gap-2 ${markColor}`}
+        >
+          <CandleMark className="w-[18px] h-[18px] md:w-5 md:h-5 shrink-0" />
           evening candle
         </Link>
 

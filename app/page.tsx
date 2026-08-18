@@ -2,14 +2,15 @@ import Link from "next/link";
 import Image from "next/image";
 import { products } from "@/app/data/products";
 import ProductCard from "@/app/components/ProductCard";
+import HeroCollage from "@/app/components/HeroCollage";
+import Reveal from "@/app/components/Reveal";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
+import { getReviewSummaries } from "@/app/lib/reviewStore";
 
 const KAKAO_OPEN_CHAT_URL = "https://open.kakao.com/o/srDgHd2h";
 
 const IMG = {
-  hero: "https://images.unsplash.com/photo-1640095889747-2090ee12fa7d",
-  candleClose: "https://images.unsplash.com/photo-1603006905003-be475563bc59",
   forestPath: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e",
   forestLight: "https://images.unsplash.com/photo-1596237295359-2ea7c9b00ebd",
   linen: "https://images.unsplash.com/photo-1772268485810-29dc9d231f26",
@@ -18,30 +19,23 @@ const IMG = {
   chair: "https://images.unsplash.com/photo-1519947486511-46149fa0a254",
 };
 
-// 히어로 워드마크는 잉크색 원본과 흰색 사본이 정확히 같은 자리에 겹쳐야 합니다.
-// 좌측으로 튀어나오는 -translate-x는 xl부터만 적용합니다. md~lg 구간에서는
-// 사진 높이가 낮아 워드마크가 위로 올라오는데, 그 상태로 왼쪽까지 나오면
-// 좌측 칼럼의 "Our Signature" 문구와 글자가 겹칩니다.
-const WORDMARK_CLASS =
-  "font-display leading-[0.86] pointer-events-none animate-fade-up";
-const WORDMARK_TYPE = {
-  fontSize: "clamp(3.4rem, 15vw, 7rem)",
-  animationDelay: "240ms",
-};
-
+// size는 /public/brand/step-0*.png 원본 크기입니다(비율 유지용).
 const PROCESS = [
   {
     no: "01",
+    size: { width: 636, height: 522 },
     title: "숲에서 향을 고릅니다",
     desc: "나무, 이끼, 늦은 오후의 볕. 자연에서 만난 순간을 향으로 옮깁니다.",
   },
   {
     no: "02",
+    size: { width: 794, height: 494 },
     title: "손끝으로 빚습니다",
     desc: "틀에 붓지 않고 하나씩 조각해, 같은 모양이 하나도 없습니다.",
   },
   {
     no: "03",
+    size: { width: 736, height: 525 },
     title: "천천히 굳힙니다",
     desc: "낮은 온도에서 며칠에 걸쳐 굳혀 향이 깊고 오래 머뭅니다.",
   },
@@ -50,139 +44,18 @@ const PROCESS = [
 export default function Home() {
   const featured = products.slice(0, 3);
   const signature = products[1];
+  const summaries = getReviewSummaries(featured.map((product) => product.id));
 
   return (
     <>
       <Navbar />
 
       {/*
-        overflow-x-hidden은 세로축을 auto로 만들어 헤더 뒤로 올린 히어로를 잘라냅니다.
-        가로만 자르는 overflow-x-clip을 씁니다.
+        overflow-x-hidden은 세로축을 auto로 만들어 살짝 기울어진 콜라주 조각을
+        잘라냅니다. 가로만 자르는 overflow-x-clip을 씁니다.
       */}
       <main className="w-full overflow-x-clip">
-        {/* ── 히어로: 사진 콜라주 + 오버랩 워드마크 ───────────────── */}
-        {/*
-          모바일에서는 헤더 뒤로 사진이 비치도록 위로 끌어올리고,
-          워드마크부터 "컬렉션 보기" 버튼까지가 한 화면(100svh)에 담기도록
-          사진이 남는 높이를 flex로 채웁니다.
-        */}
-        <section className="max-w-6xl mx-auto px-5 -mt-16 md:mt-0 pt-0 md:pt-12">
-          <div className="flex flex-col h-[100svh] md:h-auto md:grid md:grid-cols-12 md:gap-6 md:items-start">
-            {/*
-              중앙 메인 이미지 + 겹쳐지는 워드마크.
-              모바일 세로 스택에서는 사진이 맨 위여야 하므로 DOM 순서상 먼저 두고,
-              데스크톱 그리드 위치는 col-start / row-start로 직접 지정합니다.
-              z-10은 워드마크를 좌측 텍스트 칼럼 위로 올리기 위한 것입니다.
-            */}
-            <div
-              className="flex-1 min-h-0 flex flex-col md:block md:col-start-4 md:col-span-6 md:row-start-1 relative z-10 animate-fade-up"
-              style={{ animationDelay: "80ms" }}
-            >
-              {/*
-                모바일에서는 헤더 뒤부터 남는 높이를 모두 채웁니다.
-                z-30은 아래 h1(z-20)보다 위에 두기 위한 것입니다. 모바일 애니메이션의
-                clip-path가 이 요소를 별도 쌓임 맥락으로 만들기 때문에, 안에 있는 흰색
-                사본이 h1을 덮으려면 래퍼 자체가 h1보다 위여야 합니다.
-              */}
-              <div className="hero-fill relative z-30 flex-1 min-h-0 md:h-auto aspect-auto md:aspect-[4/5] w-auto -mx-5 md:mx-0 overflow-hidden">
-                <Image
-                  src={`${IMG.hero}?w=1200&h=1500&fit=crop&q=80`}
-                  alt="해질녘 창가에서 은은하게 타오르는 캔들"
-                  fill
-                  priority
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                />
-                {/* 사진 위 글씨가 읽히도록 상단에만 옅은 그늘 */}
-                <div
-                  className="absolute inset-0 md:hidden"
-                  style={{
-                    background:
-                      "linear-gradient(to bottom, rgba(24,20,15,0.62) 0%, rgba(24,20,15,0.42) 30%, rgba(24,20,15,0.12) 52%, rgba(24,20,15,0) 70%)",
-                  }}
-                />
-
-                {/*
-                  아래 h1과 완전히 같은 자리에 놓은 흰색 사본입니다.
-                  이 래퍼가 overflow-hidden이라 사진에 걸치는 부분만 흰색으로 보입니다.
-                */}
-                <span
-                  aria-hidden="true"
-                  className={`${WORDMARK_CLASS} absolute z-30 left-5 top-full -translate-y-14 md:left-0 md:top-auto md:bottom-0 md:translate-y-[32%] md:translate-x-0 xl:-translate-x-[18%]`}
-                  style={{ ...WORDMARK_TYPE, color: "#fff" }}
-                >
-                  evening
-                  <br />
-                  candle
-                </span>
-              </div>
-
-              {/* 모바일에서는 이미지 아래, 데스크톱에서는 이미지 좌측 하단에 겹칩니다. */}
-              <h1
-                className={`${WORDMARK_CLASS} relative z-20 -mt-14 md:mt-0 md:absolute md:left-0 md:bottom-0 md:translate-y-[32%] md:translate-x-0 xl:-translate-x-[18%]`}
-                style={{ ...WORDMARK_TYPE, color: "var(--color-ink)" }}
-              >
-                evening
-                <br />
-                candle
-              </h1>
-            </div>
-
-            {/* 좌측 텍스트 칼럼 — 리드 카피 + Our Signature 소개 */}
-            <div
-              className="shrink-0 mt-6 pb-8 md:mt-0 md:pb-0 md:col-start-1 md:col-span-3 md:row-start-1 md:pt-24 animate-fade-up"
-              style={{ animationDelay: "160ms" }}
-            >
-              {/* 리드 카피 — 모바일에서는 숨깁니다 */}
-              <div className="hidden md:block mb-10">
-                <p className="eyebrow mb-3">Handmade Soy Candle</p>
-                <p
-                  className="text-[13px] leading-relaxed text-pretty"
-                  style={{ color: "var(--color-muted)" }}
-                >
-                  린넨 위로 스며드는 오후 햇살처럼,
-                  하루의 끝에 놓아두는 작은 위안.
-                  이브닝캔들은 숲에서 만난 향을 손으로 빚습니다.
-                </p>
-              </div>
-
-              <p className="eyebrow mb-2.5">Our Signature</p>
-              <h2 className="font-display text-[1.35rem] leading-snug mb-5" style={{ color: "var(--color-ink)" }}>
-                하루의 끝에 두는
-                <br />
-                가장 다정한 불빛.
-              </h2>
-              <Link href="/products" className="btn-outline text-[11px] px-4 py-2.5">
-                컬렉션 보기
-              </Link>
-            </div>
-
-            {/* 모바일에서는 히어로를 한 화면에 담기 위해 두 번째 사진을 숨깁니다. */}
-            {/*
-              데스크톱에서는 칼럼 밖으로 왼쪽으로 당겨 중앙 메인 이미지 위에 겹칩니다.
-              z-20으로 중앙 칼럼(z-10)보다 위에 두고,
-              크림색 아웃라인이 사진 위에 얹힌 경계를 만들어 줍니다.
-            */}
-            <div
-              className="hidden md:block md:col-start-10 md:col-span-3 md:row-start-1 md:self-center relative z-20 animate-fade-up"
-              style={{ animationDelay: "160ms" }}
-            >
-              <div
-                className="relative aspect-square w-[calc(100%_+_6rem)] -ml-24 overflow-hidden"
-                style={{ outline: "8px solid var(--color-cream)" }}
-              >
-                <Image
-                  src={`${IMG.candleClose}?w=760&h=760&fit=crop&q=75`}
-                  alt="따뜻한 빛을 내는 소이 캔들 클로즈업"
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 30vw"
-                />
-              </div>
-            </div>
-          </div>
-
-        </section>
+        <HeroCollage />
 
         {/* ── WHO WE ARE ──────────────────────────────────────────── */}
         <section id="story" className="max-w-6xl mx-auto px-5 py-20 md:py-28 scroll-mt-20">
@@ -198,21 +71,32 @@ export default function Home() {
             </div>
             <div>
               <p className="eyebrow mb-5">Who We Are</p>
-              <h2
-                className="font-display mb-6 leading-[1.1]"
-                style={{ color: "var(--color-ink)", fontSize: "clamp(2.1rem, 7vw, 3.2rem)" }}
-              >
-                Forest &amp;
-                <br />
-                Linen
+              {/*
+                직접 쓴 캘리그래피라 폰트 대신 이미지로 넣습니다.
+                alt에 문구를 그대로 담아 검색엔진과 스크린리더에도 읽히게 합니다.
+              */}
+              <h2 className="mb-7">
+                <Image
+                  src="/brand/story-headline.png"
+                  alt="하루의 끝에, 나를 위한 작은 빛"
+                  width={1031}
+                  height={449}
+                  className="w-full max-w-[340px] md:max-w-[420px] h-auto"
+                  sizes="(max-width: 767px) 340px, 420px"
+                />
               </h2>
               <p
                 className="text-[15px] leading-[1.9] mb-8 text-pretty max-w-md"
                 style={{ color: "var(--color-muted)" }}
               >
-                이브닝캔들은 숲과 린넨, 늦은 오후의 햇살에서 영감을 받습니다.
-                정제 파라핀 없이 천연 소이 왁스만 사용하고, 틀이 아닌 손끝의
-                감각을 따라 하나씩 빚습니다.
+                이브닝 캔들은 바쁜 하루가 천천히 저무는 시간에서 시작됩니다.{" "}
+                {/*
+                  모바일에서는 첫 문장이 이미 두 줄로 나뉘어 줄바꿈을 넣지 않습니다.
+                  줄바꿈이 숨겨졌을 때 두 문장이 붙지 않도록 앞에 공백을 둡니다.
+                */}
+                <br className="hidden md:inline" />
+                늦은 오후의 햇살, 깨끗한 린넨의 포근함, 창문 사이로 스며드는
+                조용한 바람처럼 일상 속 작은 순간들을 향으로 담아냅니다.
               </p>
               <Link href="/products" className="btn-solid">
                 자세히 보기
@@ -234,19 +118,27 @@ export default function Home() {
                 세 번의 시간.
               </h2>
               <div>
-                {PROCESS.map(({ no, title, desc }, i) => (
-                  <div
+                {PROCESS.map(({ no, size, title, desc }, i) => (
+                  // 스크롤로 화면에 들어올 때 위에서부터 차례로 떠오릅니다.
+                  // (세 항목이 한 화면에 같이 들어와도 순서대로 보이도록 시간차를 둡니다.)
+                  <Reveal
                     key={no}
+                    delay={i * 260}
                     className="flex items-start gap-5 py-6"
-                    style={{
-                      borderTop: i === 0 ? "none" : "1px solid var(--color-sand)",
-                    }}
                   >
-                    <span
-                      className="font-display shrink-0 leading-none"
-                      style={{ color: "var(--color-sage)", fontSize: "2.6rem" }}
-                    >
-                      {no}
+                    {/*
+                      직접 쓴 캘리그래피 숫자입니다. 숫자마다 가로 비율이 달라
+                      높이를 맞추고, 고정폭 칸 안에서 가운데로 두어 본문 시작선을
+                      나란히 맞춥니다.
+                    */}
+                    <span className="shrink-0 w-14 md:w-16 flex justify-center pt-1">
+                      <Image
+                        src={`/brand/step-${no}.png`}
+                        alt={no}
+                        width={size.width}
+                        height={size.height}
+                        className="h-9 md:h-11 w-auto"
+                      />
                     </span>
                     <div className="pt-1.5">
                       <p className="text-sm font-semibold mb-1.5" style={{ color: "var(--color-text)" }}>
@@ -256,7 +148,7 @@ export default function Home() {
                         {desc}
                       </p>
                     </div>
-                  </div>
+                  </Reveal>
                 ))}
               </div>
             </div>
@@ -343,7 +235,11 @@ export default function Home() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-12">
             {featured.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard
+                key={product.id}
+                product={product}
+                summary={summaries.get(product.id)}
+              />
             ))}
           </div>
           <div className="flex justify-center mt-14">

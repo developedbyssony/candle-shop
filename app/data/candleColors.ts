@@ -78,6 +78,7 @@ const SPECS: ColorSpec[] = [
   { id: "purple", label: "보라", hex: "#8256b8" },
   { id: "pink", label: "핑크", hex: "#ec8fb0" },
   { id: "black", label: "검정", hex: "#35322e" },
+  { id: "ivory", label: "아이보리", hex: "#efe0c3" },
 ];
 
 export type CandleFilter = {
@@ -169,9 +170,56 @@ export const CUPCAKE_CANDLE = createPalette(
   bodyMaskMatrix(GREEN_SCORE, 0.08, 0.14)
 );
 
+/**
+ * 필라·테디베어 캔들은 원본 사진 자체가 아이보리색이라 originalId를 ivory로 둡니다.
+ *
+ * 심지가 본체와 톤이 가까워 색상 기준(YELLOW_SCORE류)으로도, 사진 속 좌표
+ * 기준(사각 영역)으로도 깨끗이 못 갈랐습니다. 좌표 기준은 상품 카드(4:5)처럼
+ * object-fit:cover가 사진을 가로로 잘라내는 화면에서는 필터가 보는 좌표와
+ * 실제 화면 좌표가 어긋나 버그가 났습니다. 그래서 이 세 상품은 색상 매트릭스로
+ * 사진 전체를 통째로 재색상화하고(심지도 같이 바뀜), 심지 부분만 원본 그대로
+ * 오려낸 이미지를 그 위에 필터 없이 얹는 방식(ProductCard 등에서 wickImage)으로
+ * 심지를 보호합니다. 오려내는 작업은 scripts/extract-wick.js 참고.
+ */
+export const TWIST_CANDLE = createPalette("twist", "#dcbd8a", "ivory");
+export const RIBBED_CANDLE = createPalette("ribbed", "#dbbc8d", "ivory");
+export const PLAIN_CANDLE = createPalette("plain", "#dfc8ad", "ivory");
+/** 테디베어는 심지가 흰 실이라(거의 무채색) 어떤 색으로 바꿔도 그대로라 오려낼 필요가 없습니다. */
+export const TEDDY_BEAR_CANDLE = createPalette("teddy", "#dfb780", "ivory");
+
+/**
+ * 아이보리 왁스에 흰 면 끈 심지를 단 상품들. 사진에서 샘플링한 본체 대표색입니다.
+ *
+ * 네 상품 모두 심지가 흰 면 끈이라 거의 무채색입니다. 재색상화 행렬은
+ * M·(t,t,t) = (t,t,t)라서 무채색은 그대로 남으므로(실측 추종률 5~8%) 심지를
+ * 따로 오려내지 않습니다.
+ */
+export const EGG_CANDLE = createPalette("egg", "#ebd6b0", "ivory");
+export const BALL_CANDLE = createPalette("ball", "#eed8b3", "ivory");
+export const SHELL_CANDLE = createPalette("shell", "#f1dbbc", "ivory");
+export const GUMMY_BEAR_CANDLE = createPalette("gummy", "#edd4ac", "ivory");
+
+/**
+ * 마카롱은 사진 자체가 진한 분홍(#e7506c)이라 originalId를 pink로 둡니다.
+ * 분홍 스와치는 팔레트 기본 분홍 대신 사진 그대로의 색을 보여줍니다.
+ *
+ * 사이의 크림 필링은 옅은 분홍이라 색 변화의 20% 정도를 따라갑니다.
+ * 면적이 작고 그만큼 몸통보다 훨씬 연하게 남아서 그대로 뒀습니다.
+ */
+export const MACARON_CANDLE = createPalette("macaron", "#e7506c", "pink");
+
 /** 필터 정의(<svg><defs>)를 만들 때 쓰는 전체 목록. */
 export const CANDLE_COLOR_FILTERS = [
   ...CHEESE_CANDLE.filters,
   ...OWL_CANDLE.filters,
   ...CUPCAKE_CANDLE.filters,
+  ...TWIST_CANDLE.filters,
+  ...RIBBED_CANDLE.filters,
+  ...PLAIN_CANDLE.filters,
+  ...TEDDY_BEAR_CANDLE.filters,
+  ...EGG_CANDLE.filters,
+  ...BALL_CANDLE.filters,
+  ...SHELL_CANDLE.filters,
+  ...GUMMY_BEAR_CANDLE.filters,
+  ...MACARON_CANDLE.filters,
 ];

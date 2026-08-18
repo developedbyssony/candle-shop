@@ -50,7 +50,19 @@ export default function CartPage() {
                       className="object-cover"
                       style={{ filter: item.color?.filter }}
                       sizes="64px"
+                      quality={98}
                     />
+                    {item.wickImage && (
+                      <Image
+                        src={item.wickImage}
+                        alt=""
+                        aria-hidden
+                        fill
+                        className="object-cover"
+                        sizes="64px"
+                        quality={98}
+                      />
+                    )}
                   </div>
                   {/* 좁은 모바일 화면에서도 이름이 잘리지 않도록 수량·금액은 아랫줄에 둡니다 */}
                   <div className="flex-1 min-w-0">

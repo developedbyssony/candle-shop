@@ -1,8 +1,17 @@
 import { Product } from "@/app/context/CartContext";
 import {
+  BALL_CANDLE,
   CHEESE_CANDLE,
   CUPCAKE_CANDLE,
+  EGG_CANDLE,
+  GUMMY_BEAR_CANDLE,
+  MACARON_CANDLE,
   OWL_CANDLE,
+  PLAIN_CANDLE,
+  RIBBED_CANDLE,
+  SHELL_CANDLE,
+  TEDDY_BEAR_CANDLE,
+  TWIST_CANDLE,
 } from "@/app/data/candleColors";
 
 export const products: Product[] = [
@@ -11,17 +20,21 @@ export const products: Product[] = [
     name: "치즈 한 조각",
     price: 21000,
     scent: "밀크",
+    size: { height: 4.5, width: 7.5 },
     image: "/products/cheese-candle-v2.png",
     description: "포근한 밀크 향이 감도는, 치즈 한 조각을 닮은 핸드메이드 오브제 캔들",
     colors: CHEESE_CANDLE.colors,
     // 상품 사진 그대로인 노랑을 기본으로 보여줍니다.
     defaultColorId: "yellow",
+    // 사진 배경이 흰색이라 상세 페이지에서도 흰 바탕으로 이어지게 합니다.
+    imageBackground: "#ffffff",
   },
   {
     id: 2,
     name: "숲속 부엉이",
     price: 23000,
     scent: "포레스트",
+    size: { height: 8.5, width: 6 },
     image: "/products/owl-candle.png",
     description:
       "숲을 지키는 부엉이를 닮은 오브제 캔들.",
@@ -33,10 +46,143 @@ export const products: Product[] = [
     name: "말차 컵케이크",
     price: 22000,
     scent: "말차",
+    size: { height: 7.5, width: 6.5 },
     image: "/products/cupcake-candle.png",
     description:
       "말차 크림을 듬뿍 올린 컵케이크를 닮은 오브제 캔들.",
     colors: CUPCAKE_CANDLE.colors,
     defaultColorId: "green",
+  },
+  {
+    id: 4,
+    name: "트위스트 필라",
+    price: 24000,
+    scent: "우디",
+    size: { height: 15, width: 6 },
+    image: "/products/twist-candle.png",
+    description:
+      "부드러운 나선형 결이 흐르는 크림빛 필라 캔들.",
+    colors: TWIST_CANDLE.colors,
+    defaultColorId: "ivory",
+    wickImage: "/products/twist-candle-wick.png",
+  },
+  {
+    id: 5,
+    name: "리본 테디베어",
+    price: 19000,
+    scent: "바닐라",
+    size: { height: 9, width: 6.5 },
+    image: "/products/teddy-bear-candle.png",
+    description:
+      "포근한 바닐라 향을 품은 곰인형 오브제 캔들.",
+    colors: TEDDY_BEAR_CANDLE.colors,
+    defaultColorId: "ivory",
+  },
+  {
+    id: 6,
+    name: "코듀로이 필라",
+    price: 23000,
+    scent: "샌달우드",
+    size: { height: 13, width: 6.5 },
+    image: "/products/ribbed-candle.png",
+    description:
+      "세로로 곧게 뻗은 골이 은은한 그림자를 그리는 필라 캔들.",
+    colors: RIBBED_CANDLE.colors,
+    defaultColorId: "ivory",
+    wickImage: "/products/ribbed-candle-wick.png",
+  },
+  {
+    id: 7,
+    name: "베이직 필라",
+    price: 20000,
+    scent: "코튼",
+    size: { height: 12, width: 6 },
+    image: "/products/plain-candle.png",
+    description:
+      "군더더기 없이 매끈한 면이 어디에나 잘 어울리는 필라 캔들.",
+    colors: PLAIN_CANDLE.colors,
+    defaultColorId: "ivory",
+    wickImage: "/products/plain-candle-wick.png",
+  },
+  {
+    id: 11,
+    name: "클래식 테디베어",
+    price: 21000,
+    scent: "화이트머스크",
+    size: { height: 7, width: 5.5 },
+    image: "/products/gummy-bear-candle.png",
+    description:
+      "동그란 몸이 손에 쏙 들어오는 곰인형 오브제 캔들.",
+    colors: GUMMY_BEAR_CANDLE.colors,
+    defaultColorId: "ivory",
+  },
+  {
+    id: 12,
+    name: "조개껍질",
+    price: 20000,
+    scent: "씨솔트",
+    size: { height: 4, width: 9 },
+    image: "/products/shell-candle.png",
+    description:
+      "결마다 빛이 다르게 걸리는 조개껍질 오브제 캔들.",
+    colors: SHELL_CANDLE.colors,
+    defaultColorId: "ivory",
+  },
+  {
+    id: 13,
+    name: "리본 볼",
+    price: 19000,
+    scent: "린넨",
+    size: { height: 7, width: 7 },
+    image: "/products/ball-candle.png",
+    description:
+      "매끈한 구에 면 끈 리본을 묶은 볼 캔들.",
+    colors: BALL_CANDLE.colors,
+    defaultColorId: "ivory",
+  },
+  {
+    id: 14,
+    name: "에그",
+    price: 18000,
+    scent: "머스크",
+    size: { height: 6.5, width: 5 },
+    image: "/products/egg-candle.png",
+    description:
+      "달걀을 그대로 옮긴 듯 둥근 오브제 캔들.",
+    colors: EGG_CANDLE.colors,
+    defaultColorId: "ivory",
+  },
+  {
+    id: 15,
+    name: "라즈베리 마카롱",
+    price: 23000,
+    scent: "라즈베리",
+    size: { height: 5.5, width: 6.5 },
+    image: "/products/macaron-candle.png",
+    description:
+      "크림을 가득 채운 마카롱과 볼 캔들이 한 세트입니다.",
+    colors: MACARON_CANDLE.colors,
+    // 상품 사진 그대로인 분홍을 기본으로 보여줍니다.
+    defaultColorId: "pink",
+  },
+  {
+    id: 16,
+    name: "말차 플라워 자",
+    price: 27000,
+    scent: "말차",
+    size: { height: 8, width: 7.5 },
+    image: "/products/matcha-flower-jar-candle.png",
+    description:
+      "말차빛 왁스 위에 크림 꽃을 올린 유리컵 캔들.",
+  },
+  {
+    id: 17,
+    name: "말차 베어 자",
+    price: 28000,
+    scent: "말차",
+    size: { height: 9, width: 7.5 },
+    image: "/products/matcha-bear-jar-candle.png",
+    description:
+      "말차빛 왁스에 곰인형이 걸터앉은 유리컵 캔들.",
   },
 ];

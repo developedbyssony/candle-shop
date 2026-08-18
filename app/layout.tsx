@@ -22,7 +22,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className={`h-full ${playfair.variable}`}>
+    // data-scroll-behavior: globals.css의 scroll-behavior:smooth를 라우트 이동에도
+    // 그대로 쓰겠다는 표시입니다. 목록 ↔ 상세를 오갈 때 스크롤 위치가 튀지 않게 합니다.
+    <html
+      lang="ko"
+      data-scroll-behavior="smooth"
+      className={`h-full ${playfair.variable}`}
+    >
       <head>
         {/* Pretendard는 외부 CDN이라 연결을 미리 열어 첫 렌더를 앞당깁니다. */}
         <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="" />

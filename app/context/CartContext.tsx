@@ -17,6 +17,12 @@ export type ProductColor = {
   filter?: string;
 };
 
+/** 완성품 크기(cm). 손으로 굳혀 만들어 조금씩 차이가 납니다. */
+export type ProductSize = {
+  height: number;
+  width: number;
+};
+
 export type Product = {
   id: number;
   name: string;
@@ -24,9 +30,20 @@ export type Product = {
   scent: string;
   image: string;
   description: string;
+  size: ProductSize;
   colors?: ProductColor[];
   /** 처음 선택된 색상. 없으면 colors의 첫 번째를 씁니다. */
   defaultColorId?: string;
+  /**
+   * 상세 페이지 사진 뒤에 깔리는 색. 기본은 베이지지만, 사진 배경이 흰색이라
+   * 베이지 액자처럼 보이는 상품은 흰색으로 맞춰줍니다.
+   */
+  imageBackground?: string;
+  /**
+   * 심지만 오려낸 투명 배경 이미지. 있으면 색상 필터가 적용된 본품 이미지
+   * 위에 필터 없이 그대로 얹어서, 색을 바꿔도 심지는 원래 색으로 보입니다.
+   */
+  wickImage?: string;
 };
 
 /** 같은 상품이라도 색상이 다르면 장바구니에서 별도 항목으로 담깁니다. */
@@ -42,7 +59,7 @@ export function cartKey(productId: number, colorId?: string) {
 
 type CartContextType = {
   cart: CartItem[];
-  addToCart: (product: Product, color?: ProductColor) => void;
+  addToCart: (product: Product, color?: ProductColor, quantity?: number) => void;
   removeFromCart: (key: string) => void;
   updateQuantity: (key: string, quantity: number) => void;
   clearCart: () => void;
@@ -132,16 +149,18 @@ function setCart(updater: (prev: CartItem[]) => CartItem[]) {
 }
 
 // 함수 참조가 렌더마다 바뀌지 않도록 컴포넌트 밖에 둡니다.
-function addToCart(product: Product, color?: ProductColor) {
+// 상세 페이지처럼 수량을 먼저 고르는 화면에서는 quantity를 한 번에 넘깁니다.
+function addToCart(product: Product, color?: ProductColor, quantity = 1) {
   const key = cartKey(product.id, color?.id);
+  const added = Math.max(1, Math.floor(quantity));
   setCart((prev) => {
     const existing = prev.find((item) => item.key === key);
     if (existing) {
       return prev.map((item) =>
-        item.key === key ? { ...item, quantity: item.quantity + 1 } : item
+        item.key === key ? { ...item, quantity: item.quantity + added } : item
       );
     }
-    return [...prev, { ...product, key, color, quantity: 1 }];
+    return [...prev, { ...product, key, color, quantity: added }];
   });
 }
 

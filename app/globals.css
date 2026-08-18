@@ -94,39 +94,6 @@ body {
   opacity: 0.82;
 }
 
-/*
-  모바일 폭이 되는 순간 히어로 사진이 위에서 아래로 펼쳐지며
-  내비게이션 아래 화면 전체를 채웁니다.
-  (미디어 쿼리 안에서만 animation을 주기 때문에 창을 줄여 모바일이 되는
-   시점마다 다시 재생됩니다.)
-*/
-@keyframes hero-drop {
-  from {
-    clip-path: inset(0 0 100% 0);
-  }
-  to {
-    clip-path: inset(0 0 0 0);
-  }
-}
-
-@keyframes hero-settle {
-  from {
-    transform: scale(1.12) translateY(-2.5%);
-  }
-  to {
-    transform: scale(1) translateY(0);
-  }
-}
-
-@media (max-width: 767px) {
-  .hero-fill {
-    animation: hero-drop 1s cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
-  .hero-fill img {
-    animation: hero-settle 1.5s cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
-}
-
 @keyframes fade-up {
   from {
     opacity: 0;
@@ -142,19 +109,72 @@ body {
   animation: fade-up 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+/*
+  히어로 워드마크는 글자 하나씩 흐릿하게 떠오릅니다.
+  촛불에 글씨가 서서히 드러나는 느낌을 노렸습니다.
+*/
+@keyframes letter-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.3em);
+    filter: blur(7px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+.animate-letter {
+  display: inline-block;
+  animation: letter-in 0.95s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/*
+  스크롤로 화면에 들어올 때 떠오르는 블록 (Reveal 컴포넌트가 붙입니다).
+  히어로 워드마크처럼 흐릿한 상태에서 천천히 또렷해집니다.
+*/
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  filter: blur(10px);
+  transition:
+    opacity 1.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 1.7s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 1.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+  filter: blur(0);
+}
+
+/* 자바스크립트가 없으면 등장 효과 없이 바로 보여줍니다. */
+@media (scripting: none) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
-  .animate-fade-up {
+  .animate-fade-up,
+  .animate-letter {
     animation: none;
     opacity: 1;
     transform: none;
+    filter: none;
   }
-  .hero-fill,
-  .hero-fill img {
-    animation: none;
-    clip-path: none;
+  .reveal {
+    opacity: 1;
     transform: none;
+    filter: none;
+    transition: none;
   }
 }
