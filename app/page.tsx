@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { products } from "@/app/data/products";
 import ProductCard from "@/app/components/ProductCard";
-import HeroPhoto from "@/app/components/HeroPhoto";
+import HeroCollage from "@/app/components/HeroCollage";
 import Reveal from "@/app/components/Reveal";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
@@ -53,7 +53,7 @@ export default function Home() {
       <Navbar />
 
       <main className="w-full overflow-x-clip">
-        <HeroPhoto />
+        <HeroCollage />
 
         {/* ── WHO WE ARE ──────────────────────────────────────────── */}
         <section id="story" className="max-w-6xl mx-auto px-5 py-20 md:py-28 scroll-mt-20">

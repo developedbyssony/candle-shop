@@ -13,6 +13,21 @@
   --color-ink: #1e1b17;
 }
 
+/*
+  히어로 메모용 픽셀 글꼴 Mona12 (SIL OFL, public/fonts/Mona-OFL.txt).
+  원본은 1MB가 넘어서 메모에 쓰는 글자만 남긴 1KB짜리 파일을 직접 둡니다.
+  메모 문구를 바꾸면 이 파일도 새로 잘라야 합니다(없는 글자는 Pretendard로 보입니다).
+*/
+@font-face {
+  font-family: "Mona12 Memo";
+  src: url("/fonts/mona12-memo.woff2") format("woff2");
+  font-display: swap;
+}
+
+.font-pixel {
+  font-family: "Mona12 Memo", 'Pretendard', sans-serif;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -94,23 +109,6 @@ body {
   opacity: 0.82;
 }
 
-/* 모바일 히어로처럼 어두운 사진 위에 올라가는 버튼. 데스크톱에서는 기본 모양으로 돌아갑니다. */
-@media (max-width: 767px) {
-  .btn-on-photo {
-    background: #fff;
-    border-color: #fff;
-    color: var(--color-ink);
-  }
-  .btn-outline-on-photo {
-    border-color: rgba(255, 255, 255, 0.85);
-    color: #fff;
-  }
-  .btn-outline-on-photo:hover {
-    background: #fff;
-    color: var(--color-ink);
-  }
-}
-
 /* 어두운 배경 섹션(색 이야기 띠)에서 쓰는 테두리 버튼 */
 .btn-outline-light {
   display: inline-flex;
@@ -131,18 +129,57 @@ body {
   color: var(--color-ink);
 }
 
-/* 히어로 사진이 아주 천천히 다가오는 효과 */
-@keyframes hero-zoom {
+/* 히어로 콜라주 조각이 살짝 커지며 내려앉는 효과 */
+@keyframes collage-in {
   from {
-    transform: scale(1.08);
+    opacity: 0;
+    transform: translateY(16px) scale(0.94);
   }
   to {
-    transform: scale(1);
+    opacity: 1;
+    transform: none;
   }
 }
 
-.animate-hero-zoom {
-  animation: hero-zoom 2.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+.animate-collage-in {
+  animation: collage-in 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* 펜으로 그리듯 선이 이어지는 효과(pathLength=1인 path에 붙입니다) */
+@keyframes draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-draw {
+  stroke-dasharray: 1;
+  animation: draw 0.9s ease-out both;
+}
+
+/* 별표가 아주 천천히 도는 효과 */
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 24s linear infinite;
+}
+
+/* 픽셀 스티커가 둥실 떠 있는 효과 */
+@keyframes bob {
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.animate-bob {
+  animation: bob 3.2s ease-in-out infinite;
 }
 
 @keyframes fade-up {
@@ -217,7 +254,10 @@ body {
   }
   .animate-fade-up,
   .animate-letter,
-  .animate-hero-zoom {
+  .animate-collage-in,
+  .animate-draw,
+  .animate-spin-slow,
+  .animate-bob {
     animation: none;
     opacity: 1;
     transform: none;
