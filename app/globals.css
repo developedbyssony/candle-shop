@@ -94,6 +94,57 @@ body {
   opacity: 0.82;
 }
 
+/* 모바일 히어로처럼 어두운 사진 위에 올라가는 버튼. 데스크톱에서는 기본 모양으로 돌아갑니다. */
+@media (max-width: 767px) {
+  .btn-on-photo {
+    background: #fff;
+    border-color: #fff;
+    color: var(--color-ink);
+  }
+  .btn-outline-on-photo {
+    border-color: rgba(255, 255, 255, 0.85);
+    color: #fff;
+  }
+  .btn-outline-on-photo:hover {
+    background: #fff;
+    color: var(--color-ink);
+  }
+}
+
+/* 어두운 배경 섹션(색 이야기 띠)에서 쓰는 테두리 버튼 */
+.btn-outline-light {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  color: #fff;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.btn-outline-light:hover {
+  background: #fff;
+  color: var(--color-ink);
+}
+
+/* 히어로 사진이 아주 천천히 다가오는 효과 */
+@keyframes hero-zoom {
+  from {
+    transform: scale(1.08);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.animate-hero-zoom {
+  animation: hero-zoom 2.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
 @keyframes fade-up {
   from {
     opacity: 0;
@@ -165,7 +216,8 @@ body {
     scroll-behavior: auto;
   }
   .animate-fade-up,
-  .animate-letter {
+  .animate-letter,
+  .animate-hero-zoom {
     animation: none;
     opacity: 1;
     transform: none;

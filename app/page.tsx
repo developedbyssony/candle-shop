@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { products } from "@/app/data/products";
 import ProductCard from "@/app/components/ProductCard";
-import HeroCollage from "@/app/components/HeroCollage";
+import HeroPhoto from "@/app/components/HeroPhoto";
 import Reveal from "@/app/components/Reveal";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
@@ -10,14 +10,16 @@ import { getReviewSummaries } from "@/app/lib/reviewStore";
 
 const KAKAO_OPEN_CHAT_URL = "https://open.kakao.com/o/srDgHd2h";
 
+// 메인 화면 사진은 모두 /public/home에 webp로 둡니다(외부 요청 없이 빨리 뜨도록).
 const IMG = {
-  forestPath: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e",
-  forestLight: "https://images.unsplash.com/photo-1596237295359-2ea7c9b00ebd",
-  linen: "https://images.unsplash.com/photo-1772268485810-29dc9d231f26",
-  interior: "https://images.unsplash.com/photo-1519710164239-da123dc03ef4",
-  botanical: "https://images.unsplash.com/photo-1512389142860-9c449e58a543",
-  chair: "https://images.unsplash.com/photo-1519947486511-46149fa0a254",
+  morningMatch: "/home/morning-match.webp",
+  flame: "/home/flame-close.webp",
+  colorCandles: "/home/color-candles.webp",
+  candlestick: "/home/candlestick-painting.webp",
 };
+
+// 일러스트 바탕색. 색 이야기 띠를 이 색으로 깔아 그림과 띠가 하나로 이어지게 합니다.
+const FOREST_GREEN = "#203316";
 
 // size는 /public/brand/step-0*.png 원본 크기입니다(비율 유지용).
 const PROCESS = [
@@ -50,20 +52,16 @@ export default function Home() {
     <>
       <Navbar />
 
-      {/*
-        overflow-x-hidden은 세로축을 auto로 만들어 살짝 기울어진 콜라주 조각을
-        잘라냅니다. 가로만 자르는 overflow-x-clip을 씁니다.
-      */}
       <main className="w-full overflow-x-clip">
-        <HeroCollage />
+        <HeroPhoto />
 
         {/* ── WHO WE ARE ──────────────────────────────────────────── */}
         <section id="story" className="max-w-6xl mx-auto px-5 py-20 md:py-28 scroll-mt-20">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
-            <div className="relative aspect-[3/4] w-full overflow-hidden">
+            <div className="relative aspect-[4/5] w-full overflow-hidden">
               <Image
-                src={`${IMG.interior}?w=900&h=1200&fit=crop&q=75`}
-                alt="린넨 커튼 사이로 햇살이 드는 밝은 실내"
+                src={IMG.morningMatch}
+                alt="침대에 누워 캔들에 성냥불을 붙이는 손"
                 fill
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, 50vw"
@@ -154,8 +152,8 @@ export default function Home() {
             </div>
             <div className="order-1 md:order-2 relative aspect-[4/5] md:aspect-[3/4] w-full overflow-hidden">
               <Image
-                src={`${IMG.forestPath}?w=900&h=1200&fit=crop&q=75`}
-                alt="아침 햇살이 스며드는 숲길"
+                src={IMG.flame}
+                alt="녹아내린 캔들 위로 타오르는 불꽃 클로즈업"
                 fill
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, 50vw"
@@ -164,66 +162,50 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── 오브제 콜라주 ──────────────────────────────────────── */}
-        <section className="max-w-6xl mx-auto px-5 pb-20 md:pb-28">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center">
-            {/* 겹쳐진 이미지 */}
-            <div className="relative pb-14 pr-10 md:pb-16 md:pr-12">
-              <div className="relative aspect-[4/3] w-[86%] overflow-hidden">
+        {/* ── 색 이야기 (어두운 숲색 띠) ─────────────────────────── */}
+        {/* 모바일에서는 그림을 좌우 끝까지 붙이고, 글만 안쪽 여백을 둡니다. */}
+        <section style={{ background: FOREST_GREEN }}>
+          <div className="max-w-6xl mx-auto md:px-5 md:py-24">
+            <div className="grid grid-cols-1 md:grid-cols-2 md:gap-16 items-center">
+              <div className="relative aspect-square w-full overflow-hidden">
                 <Image
-                  src={`${IMG.botanical}?w=800&h=600&fit=crop&q=75`}
-                  alt="흰 린넨 위에 놓인 나뭇가지와 잎"
+                  src={IMG.colorCandles}
+                  alt="여러 색의 촛대 위에서 타오르는 알록달록한 캔들 일러스트"
                   fill
                   className="object-cover"
-                  sizes="(max-width: 768px) 86vw, 43vw"
+                  sizes="(max-width: 768px) 100vw, 50vw"
                 />
               </div>
-              <div
-                className="absolute right-0 bottom-0 w-[48%] aspect-square overflow-hidden"
-                style={{
-                  background: "var(--color-beige)",
-                  outline: "8px solid var(--color-cream)",
-                }}
-              >
-                <Image
-                  src={products[0].image}
-                  alt={products[0].name}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 45vw, 22vw"
-                />
-              </div>
-            </div>
-
-            <div>
-              <h2
-                className="headline mb-6"
-                style={{ fontSize: "clamp(1.7rem, 6.5vw, 2.4rem)" }}
-              >
-                하나도 같지 않은
-                <br />
-                손끝의 오브제.
-              </h2>
-              <p
-                className="text-[15px] leading-[1.9] mb-5 text-pretty"
-                style={{ color: "var(--color-muted)" }}
-              >
-                치즈 한 조각, 숲속 부엉이, 말차 컵케이크. 일상에서 마주치는
-                반가운 장면을 캔들로 옮겨 담았습니다.
-              </p>
-              <p
-                className="text-[15px] leading-[1.9] text-pretty"
-                style={{ color: "var(--color-muted)" }}
-              >
-                불을 붙이지 않아도 좋은 오브제로, 불을 붙이면 향이 되는
-                캔들로. 두 가지 얼굴을 가진 작은 선물입니다.
-              </p>
+              <Reveal className="px-5 pt-10 pb-20 md:p-0">
+                <p className="eyebrow mb-4" style={{ color: "rgba(255,255,255,0.6)" }}>
+                  Pick Your Color
+                </p>
+                <h2
+                  className="headline mb-6"
+                  style={{ color: "#fff", fontSize: "clamp(1.7rem, 6.5vw, 2.4rem)" }}
+                >
+                  오늘의 기분을
+                  <br />
+                  색으로 고르세요.
+                </h2>
+                <p
+                  className="text-[15px] leading-[1.9] mb-8 text-pretty max-w-md"
+                  style={{ color: "rgba(255,255,255,0.72)" }}
+                >
+                  같은 모양이라도 색이 달라지면 방의 분위기가 달라집니다.
+                  불을 붙이지 않아도 좋은 오브제로, 불을 붙이면 향이 되는
+                  캔들로 곁에 두세요.
+                </p>
+                <Link href="/products" className="btn-outline-light">
+                  색상별로 보기
+                </Link>
+              </Reveal>
             </div>
           </div>
         </section>
 
         {/* ── 추천 상품 ──────────────────────────────────────────── */}
-        <section className="max-w-6xl mx-auto px-5 pb-20 md:pb-28">
+        <section className="max-w-6xl mx-auto px-5 py-20 md:py-28">
           <div className="text-center mb-12">
             <p className="eyebrow mb-3">Our Collection</p>
             <h2
@@ -322,91 +304,46 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── 사용 장면 트립틱 ───────────────────────────────────── */}
-        <section className="max-w-6xl mx-auto px-5 py-20 md:py-28">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10 items-center">
-            <div className="relative aspect-[3/4] w-full overflow-hidden">
-              <Image
-                src={`${IMG.linen}?w=800&h=1060&fit=crop&q=75`}
-                alt="린넨 커튼 위로 드리운 나뭇잎 그림자"
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 33vw"
-              />
-            </div>
-
-            <div className="text-center md:text-left">
-              <h2
-                className="headline mb-5"
-                style={{ fontSize: "clamp(1.6rem, 6vw, 2.1rem)" }}
-              >
-                저녁은
-                <br />
-                편안해야 하니까.
-              </h2>
-              <p
-                className="text-[14px] leading-[1.9] text-pretty"
-                style={{ color: "var(--color-muted)" }}
-              >
-                퇴근 후 조명을 낮추고 심지에 불을 붙이는 몇 초. 그 사이에
-                하루가 정리됩니다. 은은하고 다정한 향이 오래 머물도록
-                낮은 온도에서 천천히 다룹니다.
-              </p>
-            </div>
-
-            <div>
-              <div className="relative aspect-[3/4] w-full overflow-hidden">
-                <Image
-                  src={`${IMG.chair}?w=800&h=1060&fit=crop&q=75`}
-                  alt="식물 옆에 놓인 흰 의자와 자연광"
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                />
-              </div>
-              <p
-                className="text-[13px] leading-relaxed mt-4"
-                style={{ color: "var(--color-muted)" }}
-              >
-                침실, 책상 위, 욕실 선반. 어디에 두어도 어울리는 담백한 형태로
-                만듭니다.
-              </p>
-            </div>
-          </div>
-        </section>
-
         {/* ── 상담 CTA ───────────────────────────────────────────── */}
-        <section className="max-w-6xl mx-auto px-5 pb-20 md:pb-28">
+        <section className="max-w-6xl mx-auto px-5 py-20 md:py-28">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
             <div className="order-2 md:order-1">
+              <p className="eyebrow mb-4">Talk With Us</p>
+              <h2
+                className="headline mb-6"
+                style={{ fontSize: "clamp(1.6rem, 6vw, 2.2rem)" }}
+              >
+                나에게 맞는 캔들,
+                <br />
+                함께 골라 드릴게요.
+              </h2>
               <p
                 className="text-[15px] leading-[1.9] mb-7 text-pretty max-w-sm"
-                style={{ color: "var(--color-text)" }}
+                style={{ color: "var(--color-muted)" }}
               >
-                향과 색상, 선물 포장까지. 어떤 캔들이 어울릴지 함께 골라
-                드릴게요.
+                향과 색상, 선물 포장까지. 카카오톡으로 편하게 물어봐 주세요.
               </p>
               <div className="flex flex-wrap gap-3">
                 <Link
                   href={KAKAO_OPEN_CHAT_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn-outline"
+                  className="btn-solid"
                 >
                   카카오톡 상담하기
                 </Link>
-                <Link href="/products" className="btn-solid">
+                <Link href="/products" className="btn-outline">
                   컬렉션 보기
                 </Link>
               </div>
             </div>
-            <div className="order-1 md:order-2 relative aspect-[4/3] w-full overflow-hidden">
+            <div className="order-1 md:order-2 relative aspect-[4/5] w-full max-w-md md:ml-auto overflow-hidden">
               <Image
-                src={`${IMG.forestLight}?w=1000&h=750&fit=crop&q=75`}
-                alt="나무 사이로 쏟아지는 아침 햇살"
+                src={IMG.candlestick}
+                alt="황토빛 종이에 그린 촛대와 촛불 그림"
                 fill
                 className="object-cover"
-                sizes="(max-width: 768px) 100vw, 50vw"
+                sizes="(max-width: 768px) 100vw, 448px"
               />
             </div>
           </div>
