@@ -28,8 +28,16 @@ export default function RootLayout({
       lang="ko"
       data-scroll-behavior="smooth"
       className={`h-full ${playfair.variable}`}
+      // head의 스크립트가 그리기 전에 data-theme을 붙일 수 있어 그 차이는 경고하지 않게 합니다.
+      suppressHydrationWarning
     >
       <head>
+        {/* 지난번에 불을 꺼 뒀으면(다크모드) 화면을 그리기 전에 먼저 복원해 밝은 화면이 번쩍이지 않게 합니다. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(localStorage.getItem("theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}`,
+          }}
+        />
         {/* Pretendard는 외부 CDN이라 연결을 미리 열어 첫 렌더를 앞당깁니다. */}
         <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="" />
         <link

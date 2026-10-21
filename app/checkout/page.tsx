@@ -4,7 +4,6 @@ import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 import { useCart } from "@/app/context/CartContext";
 import { createOrder } from "@/app/actions/checkout";
@@ -77,7 +76,6 @@ export default function CheckoutPage() {
   if (done) {
     return (
       <>
-        <Navbar />
         <main className="w-full max-w-md mx-auto px-5 py-24 text-center">
           <p className="text-4xl mb-4">🕯️</p>
           <p className="text-sm" style={{ color: "var(--color-muted)" }}>
@@ -92,7 +90,6 @@ export default function CheckoutPage() {
   if (cart.length === 0) {
     return (
       <>
-        <Navbar />
         <main className="w-full max-w-md mx-auto px-5 py-24 text-center">
           <p className="text-4xl mb-5">🕯️</p>
           <p className="text-sm mb-6" style={{ color: "var(--color-muted)" }}>
@@ -109,7 +106,6 @@ export default function CheckoutPage() {
 
   return (
     <>
-      <Navbar />
       <main className="w-full max-w-2xl mx-auto px-5 py-10 pb-32">
         <div className="mb-8">
           <p className="eyebrow mb-2.5">Checkout</p>

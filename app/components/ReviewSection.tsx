@@ -8,7 +8,7 @@ export default function ReviewSection({ productId }: { productId: number }) {
   const summary = getReviewSummary(productId);
 
   return (
-    <section id="reviews" className="mt-16 md:mt-24 scroll-mt-20">
+    <section id="reviews" className="mt-16 md:mt-24">
       <h2 className="eyebrow mb-5">Reviews</h2>
 
       {summary.count > 0 && (

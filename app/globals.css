@@ -11,6 +11,8 @@
   --color-muted: #7c7c7c;
   /* 에디토리얼 대비용 딥 잉크 — 버튼·푸터에만 사용 */
   --color-ink: #1e1b17;
+  /* 늘 어두운 바탕(푸터·음악 버튼·앱 아이콘). 다크모드에서 ink가 밝아져도 이건 그대로입니다. */
+  --color-deep: #1e1b17;
 }
 
 /*
@@ -57,6 +59,14 @@ body {
   text-transform: uppercase;
   color: var(--color-muted);
   font-weight: 500;
+}
+
+/*
+  히어로 로고 아래 부제(HANDMADE SOY CANDLE)는 타이틀과 같은 먹색으로 둡니다.
+  다크모드에서는 ink가 밝아져 함께 밝아집니다.
+*/
+.hero-subtitle {
+  color: var(--color-ink);
 }
 
 /* 한글 대제목 — 얇고 넓게, 에디토리얼 톤 */
@@ -145,6 +155,64 @@ body {
   animation: collage-in 1s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+/*
+  빈티지 사진: 살짝 바랜 색 + 필름 입자 + 그을린 듯한 갈색 가장자리.
+  사진을 감싼 상자(position: relative, overflow: hidden)에 붙입니다.
+  입자는 SVG 노이즈 한 장(1KB 미만)을 반복해서 깔아 이미지를 더 받지 않습니다.
+*/
+.vintage-photo img {
+  filter: sepia(0.32) saturate(0.82) contrast(1.06) brightness(0.97);
+}
+
+.vintage-photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .25 0 0 0 0 .15 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+  opacity: 0.55;
+  box-shadow:
+    inset 0 0 0 2px rgba(74, 46, 22, 0.55),
+    inset 0 0 18px 4px rgba(92, 58, 26, 0.55),
+    inset 0 0 60px 10px rgba(140, 96, 52, 0.25);
+}
+
+/* 사진을 둘러싼 누렇게 바랜 인화지 테두리 */
+.aged-paper {
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(255, 252, 240, 0.9), transparent 60%),
+    radial-gradient(ellipse at 80% 90%, rgba(196, 160, 112, 0.35), transparent 55%),
+    #efe3cb;
+  box-shadow: inset 0 0 14px rgba(150, 112, 66, 0.35);
+}
+
+/* 반투명 마스킹 테이프(양 끝을 지그재그로 뜯은 모양) */
+.masking-tape {
+  position: absolute;
+  height: 1.35rem;
+  background: rgba(226, 210, 178, 0.78);
+  box-shadow: 0 1px 2px rgba(30, 27, 23, 0.12);
+  clip-path: polygon(0 8%, 4% 0, 96% 6%, 100% 0, 97% 50%, 100% 100%, 95% 92%, 3% 100%, 0 94%, 3% 50%);
+  backdrop-filter: blur(0.5px);
+}
+
+/* 줄 노트 종이: 하늘색 가로줄 + 왼쪽의 붉은 여백선 */
+.ruled-paper {
+  background:
+    linear-gradient(90deg, transparent 1.35rem, rgba(200, 110, 96, 0.45) 1.35rem, rgba(200, 110, 96, 0.45) calc(1.35rem + 1px), transparent calc(1.35rem + 1px)),
+    repeating-linear-gradient(to bottom, transparent 0, transparent calc(1lh - 1px), rgba(130, 160, 180, 0.35) calc(1lh - 1px), rgba(130, 160, 180, 0.35) 1lh),
+    #fbf7ec;
+}
+
+/* 입장권: 양옆에 반원 홈을 판 티켓 */
+.ticket-stub {
+  -webkit-mask: radial-gradient(circle at 0 50%, transparent 0.42rem, #000 0.45rem) left / 51% 100% no-repeat,
+    radial-gradient(circle at 100% 50%, transparent 0.42rem, #000 0.45rem) right / 51% 100% no-repeat;
+  mask: radial-gradient(circle at 0 50%, transparent 0.42rem, #000 0.45rem) left / 51% 100% no-repeat,
+    radial-gradient(circle at 100% 50%, transparent 0.42rem, #000 0.45rem) right / 51% 100% no-repeat;
+}
+
 /* 펜으로 그리듯 선이 이어지는 효과(pathLength=1인 path에 붙입니다) */
 @keyframes draw {
   from {
@@ -158,17 +226,6 @@ body {
 .animate-draw {
   stroke-dasharray: 1;
   animation: draw 0.9s ease-out both;
-}
-
-/* 별표가 아주 천천히 도는 효과 */
-@keyframes spin-slow {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.animate-spin-slow {
-  animation: spin-slow 24s linear infinite;
 }
 
 /* 픽셀 스티커가 둥실 떠 있는 효과 */
@@ -220,6 +277,132 @@ body {
 }
 
 /*
+  모션 로고: 'evening'의 i 점 자리 불꽃.
+  글자가 다 떠오른 뒤 한 번 톡 켜지고(ignite), 그 뒤로는 가만히 있습니다.
+*/
+@keyframes flame-ignite {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.15);
+  }
+  55% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.15);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+}
+
+.flame-ignite {
+  transform-origin: 50% 100%;
+  animation: flame-ignite 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/*
+  워드마크 뒤 둥근 빛: 불꽃이 켜질 때 함께 번지고(glow-in), 이후 촛불처럼 일렁입니다(glow-flicker).
+  위치는 HeroCollage에서 불꽃 자리(em 단위)에 맞춥니다.
+*/
+@keyframes glow-in {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* 촛불처럼 고르지 않게 밝기·크기·위치가 살짝씩 흔들립니다. */
+@keyframes glow-flicker {
+  0%,
+  100% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  12% {
+    opacity: 0.82;
+    transform: translate(1.5%, -1%) scale(0.97);
+  }
+  27% {
+    opacity: 0.95;
+    transform: translate(-1%, 0.5%) scale(1.03);
+  }
+  41% {
+    opacity: 0.72;
+    transform: translate(1%, 1.5%) scale(0.95);
+  }
+  58% {
+    opacity: 1;
+    transform: translate(-1.5%, -0.5%) scale(1.05);
+  }
+  73% {
+    opacity: 0.85;
+    transform: translate(0.5%, -1.5%) scale(0.98);
+  }
+  86% {
+    opacity: 0.93;
+    transform: translate(-0.5%, 1%) scale(1.02);
+  }
+}
+
+.wordmark-glow {
+  pointer-events: none;
+  animation: glow-in 1.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* 일렁이는 효과는 안쪽 층이 맡아 켜지는 효과(바깥 층)와 겹치지 않게 합니다. */
+.wordmark-glow::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle,
+    rgba(255, 210, 140, 0.55) 0%,
+    rgba(250, 222, 176, 0.32) 35%,
+    rgba(250, 230, 200, 0) 70%
+  );
+  animation: glow-flicker 3.6s ease-in-out infinite;
+}
+
+/*
+  라이트 모드 = 불 켜진 방이라 촛불은 꺼둡니다(심지만 남음). 다크 모드에서 불을 끄면 촛불이 켜집니다.
+  불꽃·글자 뒤 빛은 scale 속성으로 줄였다 키워서, transform을 쓰는 켜짐·일렁임 애니메이션과 겹치지 않게 합니다.
+*/
+.flame-light {
+  transform-origin: 50% 100%;
+  transition:
+    opacity 0.5s ease,
+    scale 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.wordmark-glow {
+  transition: scale 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+html:not([data-theme="dark"]) .flame-light {
+  opacity: 0;
+  scale: 0.2;
+}
+html:not([data-theme="dark"]) .wordmark-glow {
+  scale: 0;
+}
+
+/*
+  히어로 등장 순서(모바일·데스크톱 공통): 콜라주가 먼저 내려앉은 뒤 인사말이 천천히 떠오릅니다.
+*/
+.hero-intro {
+  --intro-delay: 900ms;
+}
+.hero-intro .animate-fade-up {
+  animation-duration: 1.25s;
+}
+.hero-intro .animate-letter {
+  animation-duration: 1.2s;
+}
+
+/*
   스크롤로 화면에 들어올 때 떠오르는 블록 (Reveal 컴포넌트가 붙입니다).
   히어로 워드마크처럼 흐릿한 상태에서 천천히 또렷해집니다.
 */
@@ -256,7 +439,6 @@ body {
   .animate-letter,
   .animate-collage-in,
   .animate-draw,
-  .animate-spin-slow,
   .animate-bob {
     animation: none;
     opacity: 1;
@@ -268,5 +450,181 @@ body {
     transform: none;
     filter: none;
     transition: none;
+  }
+}
+
+/* 동작 줄이기: 불꽃은 켜진 채로 가만히 둡니다. */
+@media (prefers-reduced-motion: reduce) {
+  .flame-ignite {
+    animation: none;
+    opacity: 1;
+    transform: translateX(-50%);
+  }
+}
+
+/* 동작 줄이기: 글자 뒤 빛은 켜진 채로 가만히 둡니다. */
+@media (prefers-reduced-motion: reduce) {
+  .wordmark-glow {
+    animation: none;
+    opacity: 1;
+  }
+  .wordmark-glow::before {
+    animation: none;
+  }
+}
+
+/*
+  불 끄기(다크모드) — 모바일·데스크톱 모두 적용합니다.
+  html[data-theme="dark"]는 헤더의 '불 끄기' 버튼이 붙이고, layout.tsx의 작은 스크립트가 다음 방문에도 복원합니다.
+  대부분 색 변수만 바꾸면 따라오고, 색을 직접 쓴 곳만 아래에서 따로 맞춥니다.
+*/
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --color-cream: #15120e;
+  --color-beige: #201b16;
+  --color-sand: #3a3128;
+  --color-sage: #9fb39f;
+  --color-sage-dark: #b7c8b6;
+  --color-brown: #d4bea2;
+  --color-text: #ebe3d5;
+  --color-muted: #a49987;
+  --color-ink: #f3ebdc;
+}
+
+/* 밝아진 ink 바탕 위 글씨는 어둡게 */
+html[data-theme="dark"] .btn-solid {
+  color: var(--color-cream);
+}
+html[data-theme="dark"] .btn-outline:hover {
+  color: var(--color-cream);
+}
+
+/* 갈색 손글씨 그림은 반전해 어두운 바탕에서 따뜻한 밝은 색으로 보이게 합니다. */
+html[data-theme="dark"] .ink-art {
+  filter: invert(1) hue-rotate(180deg) brightness(1.05);
+}
+html[data-theme="dark"] .choose-ink {
+  color: #dcc0ac !important;
+}
+
+/*
+  히어로 콜라주 사진만 낮춥니다(아래쪽 제품 사진은 그대로).
+  빈티지 사진은 원래 색감 필터에 밝기만 더하고, 손글씨 메모 그림은 종이 위라 건드리지 않습니다.
+*/
+html[data-theme="dark"] section:has(.hero-intro) img:not([src*="note-calligraphy"]) {
+  filter: brightness(0.74) saturate(0.92);
+}
+html[data-theme="dark"] section:has(.hero-intro) .vintage-photo img {
+  filter: sepia(0.32) saturate(0.78) contrast(1.06) brightness(0.72);
+}
+
+/*
+  불빛 페더: 다크모드에서는 빛이 더 넓고 부드럽게 번지도록
+  색이 빠지는 단계를 늘리고 가장자리를 흐립니다.
+*/
+html[data-theme="dark"] .wordmark-glow::before {
+  inset: -30%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 204, 128, 0.42) 0%,
+    rgba(255, 190, 112, 0.26) 22%,
+    rgba(240, 168, 98, 0.13) 45%,
+    rgba(220, 150, 90, 0.05) 62%,
+    rgba(220, 150, 90, 0) 75%
+  );
+  filter: blur(18px);
+}
+
+/*
+  다크모드 토글 스위치(ThemeToggle) — 히어로 섹션 안, 데스크톱은 오른쪽 위·모바일은 오른쪽 아래에 붙어 있습니다.
+  화면에 고정하지 않아 스크롤해 히어로를 벗어나면 함께 사라집니다.
+  꺼짐(라이트): 밝은 바탕에 흰 손잡이가 왼쪽. 켜짐(다크): 밝은 크림 바탕에 어두운 손잡이가 오른쪽.
+*/
+.theme-switch {
+  position: absolute;
+  right: 1.25rem;
+  top: 1.25rem;
+  z-index: 50;
+  width: 3rem;
+  height: 1.75rem;
+  padding: 3px;
+  border-radius: 9999px;
+  background: rgba(30, 27, 23, 0.18);
+  border: 1px solid rgba(30, 27, 23, 0.12);
+  box-shadow: 0 6px 16px rgba(30, 27, 23, 0.18);
+  backdrop-filter: blur(6px);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.theme-switch-knob {
+  display: block;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 9999px;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(30, 27, 23, 0.3);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.3s ease;
+}
+
+.theme-switch[aria-checked="true"] {
+  background: var(--color-ink);
+  border-color: transparent;
+}
+
+.theme-switch[aria-checked="true"] .theme-switch-knob {
+  transform: translateX(1.25rem);
+  background: var(--color-deep);
+}
+
+.theme-switch:focus-visible {
+  outline: 2px solid var(--color-sage);
+  outline-offset: 2px;
+}
+
+/* 버튼을 누른 순간에만 색이 천천히 바뀌게 합니다(불이 서서히 꺼지는 느낌). */
+html.theme-fading,
+html.theme-fading * {
+  transition:
+    background-color 0.6s ease,
+    color 0.6s ease,
+    border-color 0.6s ease,
+    filter 0.6s ease,
+    opacity 0.5s ease,
+    scale 0.8s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+/*
+  모바일 히어로(767px 이하): 콜라주를 위에, 글자를 아래에 두고 타이틀·서브타이틀·버튼과 간격을 줄여 한 화면에 다 보이게 합니다.
+  (데스크톱 크기는 HeroCollage의 기본값 그대로)
+*/
+@media (max-width: 767px) {
+  /* 콜라주를 위로, 글자를 아래로(코드 순서는 글자→콜라주라 거꾸로 쌓습니다). */
+  .hero-stack {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+  .hero-intro {
+    --hero-title-size: 13cqi;
+    --hero-subtitle-size: 0.75rem;
+    margin-bottom: 0;
+    margin-top: 1.5rem;
+  }
+  .hero-intro h1 {
+    margin-bottom: 1rem;
+  }
+  .hero-intro .hero-subtitle {
+    margin-bottom: 1.25rem;
+  }
+  .hero-intro .btn-solid,
+  .hero-intro .btn-outline {
+    padding: 0.3rem 0.65rem;
+    gap: 0.3rem;
+    font-size: 0.625rem;
+  }
+  /* 모바일: 다크모드 토글은 엄지가 닿기 쉬운 히어로 오른쪽 아래로. */
+  .theme-switch {
+    top: auto;
+    bottom: 1.25rem;
   }
 }

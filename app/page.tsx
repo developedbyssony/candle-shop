@@ -1,354 +1,261 @@
 import Link from "next/link";
 import Image from "next/image";
 import { products } from "@/app/data/products";
-import ProductCard from "@/app/components/ProductCard";
+import type { Product } from "@/app/context/CartContext";
 import HeroCollage from "@/app/components/HeroCollage";
 import Reveal from "@/app/components/Reveal";
-import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
-import { getReviewSummaries } from "@/app/lib/reviewStore";
-
-const KAKAO_OPEN_CHAT_URL = "https://open.kakao.com/o/srDgHd2h";
+import TicketStub from "@/app/components/TicketStub";
+import ScrollFx from "@/app/components/ScrollFx";
 
 // 메인 화면 사진은 모두 /public/home에 webp로 둡니다(외부 요청 없이 빨리 뜨도록).
 const IMG = {
   morningMatch: "/home/morning-match.webp",
-  flame: "/home/flame-close.webp",
-  colorCandles: "/home/color-candles.webp",
-  candlestick: "/home/candlestick-painting.webp",
 };
 
-// 일러스트 바탕색. 색 이야기 띠를 이 색으로 깔아 그림과 띠가 하나로 이어지게 합니다.
-const FOREST_GREEN = "#203316";
+// '나만의 캔들 고르기' 손글씨(/public/brand/choose-headline.png)의 붓 색.
+const CHOOSE_INK = "rgb(97, 60, 42)";
 
-// size는 /public/brand/step-0*.png 원본 크기입니다(비율 유지용).
-const PROCESS = [
+const byId = (id: number) => products.find((product) => product.id === id) as Product;
+
+// 상품 사진은 대부분 베이지 바탕에 어울리고, 흰 배경 사진만 흰색으로 이어 줍니다.
+const photoBackground = (product: Product) =>
+  product.imageBackground ?? "var(--color-beige)";
+
+// 고르는 방법 세 가지. ids는 각 종류에 속하는 상품 id입니다(개수 표시용).
+const KINDS = [
   {
     no: "01",
-    size: { width: 636, height: 522 },
-    title: "숲에서 향을 고릅니다",
-    desc: "나무, 이끼, 늦은 오후의 볕. 자연에서 만난 순간을 향으로 옮깁니다.",
+    title: "오브제 캔들",
+    desc: "치즈 한 조각, 숲속 부엉이, 말차 컵케이크. 불을 붙이지 않아도 방 한쪽을 채우는 작은 조각품이에요.",
+    cover: 2,
+    ids: [1, 2, 3, 5, 11, 12, 13, 14, 15],
   },
   {
     no: "02",
-    size: { width: 794, height: 494 },
-    title: "손끝으로 빚습니다",
-    desc: "틀에 붓지 않고 하나씩 조각해, 같은 모양이 하나도 없습니다.",
+    title: "필라 캔들",
+    desc: "트위스트, 코듀로이, 베이직. 식탁에도 선반에도 잘 어울리는 기둥 모양 캔들이에요.",
+    cover: 4,
+    ids: [4, 6, 7],
   },
   {
     no: "03",
-    size: { width: 736, height: 525 },
-    title: "천천히 굳힙니다",
-    desc: "낮은 온도에서 며칠에 걸쳐 굳혀 향이 깊고 오래 머뭅니다.",
+    title: "자 캔들",
+    desc: "유리 용기에 담아 오래, 고르게 타요. 다 쓰고 나면 작은 소품 그릇으로 다시 쓸 수 있어요.",
+    cover: 16,
+    ids: [16, 17],
   },
 ];
 
-export default function Home() {
-  const featured = products.slice(0, 3);
-  const signature = products[1];
-  const summaries = getReviewSummaries(featured.map((product) => product.id));
+// 이런 날에 어울리는 캔들. 상황마다 어울리는 상품 하나를 붙입니다.
+const OCCASIONS = [
+  { label: "생일 선물", productId: 3 },
+  { label: "집들이", productId: 2 },
+  { label: "고마운 마음", productId: 15 },
+  { label: "나를 위한 저녁", productId: 1 },
+  { label: "기념일", productId: 5 },
+  { label: "오래 곁에 둘 선물", productId: 16 },
+];
 
+function Arrow() {
+  return <span aria-hidden>→</span>;
+}
+
+export default function Home() {
   return (
     <>
-      <Navbar />
 
       <main className="w-full overflow-x-clip">
         <HeroCollage />
 
-        {/* ── WHO WE ARE ──────────────────────────────────────────── */}
-        <section id="story" className="max-w-6xl mx-auto px-5 py-20 md:py-28 scroll-mt-20">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
-            <div className="relative aspect-[4/5] w-full overflow-hidden">
-              <Image
-                src={IMG.morningMatch}
-                alt="침대에 누워 캔들에 성냥불을 붙이는 손"
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 50vw"
-              />
-            </div>
-            <div>
-              <p className="eyebrow mb-5">Who We Are</p>
-              {/*
-                직접 쓴 캘리그래피라 폰트 대신 이미지로 넣습니다.
-                alt에 문구를 그대로 담아 검색엔진과 스크린리더에도 읽히게 합니다.
-              */}
-              <h2 className="mb-7">
-                <Image
-                  src="/brand/story-headline.png"
-                  alt="하루의 끝에, 나를 위한 작은 빛"
-                  width={1031}
-                  height={449}
-                  className="w-full max-w-[340px] md:max-w-[420px] h-auto"
-                  sizes="(max-width: 767px) 340px, 420px"
-                />
-              </h2>
+        {/* ── 고르는 방법 세 가지 ─────────────────────────────────── */}
+        <section>
+          <div style={{ background: "var(--color-beige)" }}>
+            {/* 제목만 가운데에 둡니다. */}
+            <div className="max-w-6xl mx-auto px-5 py-14 md:py-24 text-center">
               <p
-                className="text-[15px] leading-[1.9] mb-8 text-pretty max-w-md"
-                style={{ color: "var(--color-muted)" }}
+                className="choose-ink eyebrow mb-4 md:mb-6 !text-[15px] md:!text-[19px] !tracking-[0.08em] md:!tracking-[0.16em] leading-snug"
+                // 아래 손글씨 제목의 붓 색과 같은 글자색입니다.
+                style={{ color: CHOOSE_INK }}
               >
-                이브닝 캔들은 바쁜 하루가 천천히 저무는 시간에서 시작됩니다.{" "}
-                {/*
-                  모바일에서는 첫 문장이 이미 두 줄로 나뉘어 줄바꿈을 넣지 않습니다.
-                  줄바꿈이 숨겨졌을 때 두 문장이 붙지 않도록 앞에 공백을 둡니다.
-                */}
-                <br className="hidden md:inline" />
-                늦은 오후의 햇살, 깨끗한 린넨의 포근함, 창문 사이로 스며드는
-                조용한 바람처럼 일상 속 작은 순간들을 향으로 담아냅니다.
+                모양도, 향도, 색도 취향대로
               </p>
-              <Link href="/products" className="btn-solid">
-                자세히 보기
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* ── 만드는 과정 (넘버링) ────────────────────────────────── */}
-        <section className="max-w-6xl mx-auto px-5 pb-20 md:pb-28">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-14 items-center">
-            <div className="order-2 md:order-1">
-              <h2
-                className="headline mb-9"
-                style={{ fontSize: "clamp(1.6rem, 6vw, 2.2rem)" }}
-              >
-                캔들이 만들어지는
-                <br />
-                세 번의 시간.
-              </h2>
-              <div>
-                {PROCESS.map(({ no, size, title, desc }, i) => (
-                  // 스크롤로 화면에 들어올 때 위에서부터 차례로 떠오릅니다.
-                  // (세 항목이 한 화면에 같이 들어와도 순서대로 보이도록 시간차를 둡니다.)
-                  <Reveal
-                    key={no}
-                    delay={i * 260}
-                    className="flex items-start gap-5 py-6"
-                  >
-                    {/*
-                      직접 쓴 캘리그래피 숫자입니다. 숫자마다 가로 비율이 달라
-                      높이를 맞추고, 고정폭 칸 안에서 가운데로 두어 본문 시작선을
-                      나란히 맞춥니다.
-                    */}
-                    <span className="shrink-0 w-14 md:w-16 flex justify-center pt-1">
-                      <Image
-                        src={`/brand/step-${no}.png`}
-                        alt={no}
-                        width={size.width}
-                        height={size.height}
-                        className="h-9 md:h-11 w-auto"
-                      />
-                    </span>
-                    <div className="pt-1.5">
-                      <p className="text-sm font-semibold mb-1.5" style={{ color: "var(--color-text)" }}>
-                        {title}
-                      </p>
-                      <p className="text-[13px] leading-relaxed" style={{ color: "var(--color-muted)" }}>
-                        {desc}
-                      </p>
-                    </div>
-                  </Reveal>
-                ))}
-              </div>
-            </div>
-            <div className="order-1 md:order-2 relative aspect-[4/5] md:aspect-[3/4] w-full overflow-hidden">
-              <Image
-                src={IMG.flame}
-                alt="녹아내린 캔들 위로 타오르는 불꽃 클로즈업"
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 50vw"
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* ── 색 이야기 (어두운 숲색 띠) ─────────────────────────── */}
-        {/* 모바일에서는 그림을 좌우 끝까지 붙이고, 글만 안쪽 여백을 둡니다. */}
-        <section style={{ background: FOREST_GREEN }}>
-          <div className="max-w-6xl mx-auto md:px-5 md:py-24">
-            <div className="grid grid-cols-1 md:grid-cols-2 md:gap-16 items-center">
-              <div className="relative aspect-square w-full overflow-hidden">
+              {/*
+                직접 쓴 캘리그래피라 폰트 대신 이미지로 넣습니다(배경은 투명).
+                alt에 문구를 그대로 담아 검색엔진과 스크린리더에도 읽히게 합니다.
+                입장권은 첫 줄 '나만의' 오른쪽 빈자리(그림 너비의 55%, 위에서 3%)에 붙입니다.
+              */}
+              <h2 className="relative w-full max-w-[540px] mx-auto">
                 <Image
-                  src={IMG.colorCandles}
-                  alt="여러 색의 촛대 위에서 타오르는 알록달록한 캔들 일러스트"
+                  src="/brand/choose-headline.png"
+                  alt="나만의 캔들 고르기"
+                  width={1096}
+                  height={486}
+                  className="ink-art w-full h-auto"
+                  sizes="(max-width: 767px) 90vw, 540px"
+                />
+                <TicketStub className="!absolute left-[55%] top-[3%] origin-top-left scale-[0.8] md:scale-100" />
+              </h2>
+            </div>
+          </div>
+          {/* 베이지 띠 아래를 크림색으로 부드럽게 풀어 줍니다. */}
+          <div
+            aria-hidden
+            className="h-24 md:h-32"
+            style={{
+              background: "linear-gradient(to bottom, var(--color-beige), var(--color-cream))",
+            }}
+          />
+
+          <div data-stagger className="max-w-6xl mx-auto px-5 pt-4 pb-16 md:pt-8 md:pb-24 space-y-16 md:space-y-28">
+            {KINDS.map(({ no, title, desc, cover, ids }, i) => {
+              const product = byId(cover);
+              return (
+                <div
+                  key={no}
+                  className="grid grid-cols-1 md:grid-cols-2 gap-7 md:gap-16 items-center"
+                >
+                  {/* PC에서는 사진과 글을 번갈아 좌우에 둡니다. */}
+                  <Link
+                    href="/products"
+                    className={`group relative aspect-[4/5] w-full overflow-hidden block ${
+                      i % 2 === 1 ? "md:order-2" : ""
+                    }`}
+                    style={{ background: photoBackground(product) }}
+                    aria-label={`${title} 보러 가기`}
+                  >
+                    <Image
+                      src={product.image}
+                      alt={product.name}
+                      fill
+                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                    />
+                  </Link>
+                  <div>
+                    <p
+                      className="font-display text-sm mb-3"
+                      style={{ color: "var(--color-sage-dark)" }}
+                    >
+                      {no}.
+                    </p>
+                    <h3
+                      className="headline mb-5"
+                      style={{ fontSize: "clamp(2rem, 8vw, 3.4rem)" }}
+                    >
+                      {title}
+                    </h3>
+                    <p
+                      className="text-[15px] leading-[1.9] mb-7 text-pretty max-w-md"
+                      style={{ color: "var(--color-muted)" }}
+                    >
+                      {desc}
+                    </p>
+                    <Link href="/products" className="btn-outline">
+                      {ids.length}가지 보러 가기 <Arrow />
+                    </Link>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* ── 이런 날에 ──────────────────────────────────────────── */}
+        <section className="max-w-6xl mx-auto px-5 py-16 md:py-24">
+          <div className="text-center mb-10 md:mb-14">
+            <p className="eyebrow mb-4">어떤 날이든</p>
+            <h2 className="headline" style={{ fontSize: "clamp(1.9rem, 7.5vw, 3.2rem)" }}>
+              그날에 어울리는
+              <br />
+              캔들이 있어요.
+            </h2>
+          </div>
+
+          <div data-stagger className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-5">
+            {OCCASIONS.map(({ label, productId }) => {
+              const product = byId(productId);
+              return (
+                <Link
+                  key={label}
+                  href={`/products/${product.id}`}
+                  className="group relative aspect-square overflow-hidden block"
+                  style={{ background: photoBackground(product) }}
+                >
+                  <Image
+                    src={product.image}
+                    alt={product.name}
+                    fill
+                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.05]"
+                    sizes="(max-width: 768px) 50vw, 33vw"
+                  />
+                  {/* 사진 위 글자가 잘 읽히도록 아래쪽만 살짝 어둡게 깝니다. */}
+                  <div
+                    className="absolute inset-x-0 bottom-0 p-3 md:p-5 pt-12"
+                    style={{
+                      background: "linear-gradient(to top, rgba(30,27,23,0.55), transparent)",
+                    }}
+                  >
+                    <p className="text-white text-[15px] md:text-xl font-semibold tracking-tight">
+                      {label}
+                    </p>
+                    <p className="text-white/80 text-[11px] md:text-xs mt-1">
+                      {product.name} <Arrow />
+                    </p>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* ── 브랜드 이야기 ──────────────────────────────────────── */}
+        {/* 히어로의 '브랜드 이야기' 버튼이 여기로 내려옵니다. */}
+        {/* '나만의 캔들 고르기'와 같은 베이지 바탕에 진한 글자를 둡니다. */}
+        <section id="story" style={{ background: "var(--color-beige)" }}>
+          <div className="max-w-6xl mx-auto px-5 py-16 md:py-24">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
+              <div className="relative aspect-[4/5] w-full overflow-hidden">
+                <Image
                   fill
                   className="object-cover"
+                  src={IMG.morningMatch}
+                  alt="침대에 누워 캔들에 성냥불을 붙이는 손"
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
               </div>
-              <Reveal className="px-5 pt-10 pb-20 md:p-0">
-                <p className="eyebrow mb-4" style={{ color: "rgba(255,255,255,0.6)" }}>
-                  Pick Your Color
+              <Reveal>
+                <p className="eyebrow mb-5" style={{ color: "color-mix(in srgb, var(--color-ink) 60%, transparent)" }}>
+                  브랜드 이야기
                 </p>
-                <h2
-                  className="headline mb-6"
-                  style={{ color: "#fff", fontSize: "clamp(1.7rem, 6.5vw, 2.4rem)" }}
-                >
-                  오늘의 기분을
-                  <br />
-                  색으로 고르세요.
+                {/*
+                  직접 쓴 캘리그래피라 폰트 대신 이미지로 넣습니다.
+                  alt에 문구를 그대로 담아 검색엔진과 스크린리더에도 읽히게 합니다.
+                */}
+                <h2 className="mb-7">
+                  <Image
+                    src="/brand/story-headline.png"
+                    alt="하루의 끝에, 나를 위한 작은 빛"
+                    width={1031}
+                    height={449}
+                    className="ink-art w-full max-w-[340px] md:max-w-[440px] h-auto"
+                    sizes="(max-width: 767px) 340px, 440px"
+                  />
                 </h2>
                 <p
-                  className="text-[15px] leading-[1.9] mb-8 text-pretty max-w-md"
-                  style={{ color: "rgba(255,255,255,0.72)" }}
+                  className="text-[15px] leading-[1.9] text-pretty max-w-md"
+                  style={{ color: "color-mix(in srgb, var(--color-ink) 78%, transparent)" }}
                 >
-                  같은 모양이라도 색이 달라지면 방의 분위기가 달라집니다.
-                  불을 붙이지 않아도 좋은 오브제로, 불을 붙이면 향이 되는
-                  캔들로 곁에 두세요.
+                  이브닝 캔들은 바쁜 하루가 천천히 저무는 시간에서 시작됩니다.
+                  늦은 오후의 햇살, 깨끗한 린넨의 포근함, 창문 사이로 스며드는
+                  조용한 바람처럼 일상 속 작은 순간들을 향으로 담아냅니다.
                 </p>
-                <Link href="/products" className="btn-outline-light">
-                  색상별로 보기
-                </Link>
               </Reveal>
             </div>
           </div>
         </section>
-
-        {/* ── 추천 상품 ──────────────────────────────────────────── */}
-        <section className="max-w-6xl mx-auto px-5 py-20 md:py-28">
-          <div className="text-center mb-12">
-            <p className="eyebrow mb-3">Our Collection</p>
-            <h2
-              className="font-display"
-              style={{ color: "var(--color-ink)", fontSize: "clamp(1.9rem, 7vw, 3rem)" }}
-            >
-              이달의 캔들
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-12">
-            {featured.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                summary={summaries.get(product.id)}
-              />
-            ))}
-          </div>
-          <div className="flex justify-center mt-14">
-            <Link href="/products" className="btn-outline">
-              전체 상품 보기
-            </Link>
-          </div>
-        </section>
-
-        {/* ── 시그니처 스펙 패널 ─────────────────────────────────── */}
-        <section style={{ background: "var(--color-beige)" }}>
-          <div className="max-w-6xl mx-auto px-5 py-20 md:py-24">
-            <div className="text-center mb-12">
-              <h2
-                className="font-display"
-                style={{ color: "var(--color-ink)", fontSize: "clamp(1.9rem, 7vw, 2.8rem)" }}
-              >
-                Signature Candle
-              </h2>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12 items-center">
-              {/* 좌측 소개 */}
-              <div className="order-2 md:order-1">
-                <p className="eyebrow mb-4">Best Seller</p>
-                <h3 className="headline mb-4" style={{ fontSize: "1.5rem" }}>
-                  {signature.name}
-                </h3>
-                <p
-                  className="text-[13px] leading-relaxed mb-6"
-                  style={{ color: "var(--color-muted)" }}
-                >
-                  {signature.description}
-                </p>
-                <p className="font-display text-2xl mb-7" style={{ color: "var(--color-ink)" }}>
-                  {signature.price.toLocaleString()}
-                  <span className="text-sm ml-1">원</span>
-                </p>
-                <Link href="/products" className="btn-outline">
-                  주문하기
-                </Link>
-              </div>
-
-              {/* 중앙 이미지 */}
-              <div
-                className="order-1 md:order-2 relative aspect-[3/4] w-full overflow-hidden"
-                style={{ background: "#fff" }}
-              >
-                <Image
-                  src={signature.image}
-                  alt={signature.name}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                />
-              </div>
-
-              {/* 우측 스펙 */}
-              <dl className="order-3 space-y-6">
-                {[
-                  ["향", signature.scent],
-                  ["왁스", "100% 천연 소이 왁스"],
-                  ["연소 시간", "약 20시간"],
-                  ["제작 기간", "주문 후 1–2주"],
-                ].map(([label, value]) => (
-                  <div key={label}>
-                    <dt
-                      className="text-[11px] tracking-[0.2em] uppercase mb-1.5 font-medium"
-                      style={{ color: "var(--color-sage-dark)" }}
-                    >
-                      {label}
-                    </dt>
-                    <dd className="text-sm" style={{ color: "var(--color-text)" }}>
-                      {value}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            </div>
-          </div>
-        </section>
-
-        {/* ── 상담 CTA ───────────────────────────────────────────── */}
-        <section className="max-w-6xl mx-auto px-5 py-20 md:py-28">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
-            <div className="order-2 md:order-1">
-              <p className="eyebrow mb-4">Talk With Us</p>
-              <h2
-                className="headline mb-6"
-                style={{ fontSize: "clamp(1.6rem, 6vw, 2.2rem)" }}
-              >
-                나에게 맞는 캔들,
-                <br />
-                함께 골라 드릴게요.
-              </h2>
-              <p
-                className="text-[15px] leading-[1.9] mb-7 text-pretty max-w-sm"
-                style={{ color: "var(--color-muted)" }}
-              >
-                향과 색상, 선물 포장까지. 카카오톡으로 편하게 물어봐 주세요.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                <Link
-                  href={KAKAO_OPEN_CHAT_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-solid"
-                >
-                  카카오톡 상담하기
-                </Link>
-                <Link href="/products" className="btn-outline">
-                  컬렉션 보기
-                </Link>
-              </div>
-            </div>
-            <div className="order-1 md:order-2 relative aspect-[4/5] w-full max-w-md md:ml-auto overflow-hidden">
-              <Image
-                src={IMG.candlestick}
-                alt="황토빛 종이에 그린 촛대와 촛불 그림"
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 448px"
-              />
-            </div>
-          </div>
-        </section>
       </main>
+      <ScrollFx />
 
       <Footer />
     </>

@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 import { useCart } from "@/app/context/CartContext";
 import { FREE_SHIPPING_THRESHOLD, getShippingFee } from "@/app/lib/checkout";
@@ -13,7 +12,6 @@ export default function CartPage() {
 
   return (
     <>
-      <Navbar />
       <main className="w-full max-w-2xl mx-auto px-5 py-12">
         <div className="mb-10">
           <p className="eyebrow mb-2.5">Cart</p>

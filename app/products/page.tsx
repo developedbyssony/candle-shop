@@ -1,6 +1,5 @@
 import { products } from "@/app/data/products";
 import ProductCard from "@/app/components/ProductCard";
-import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 import { getReviewSummaries } from "@/app/lib/reviewStore";
 
@@ -9,7 +8,6 @@ export default function ProductsPage() {
 
   return (
     <>
-      <Navbar />
       <main className="w-full max-w-6xl mx-auto px-5 py-14 md:py-20">
         <div className="text-center mb-14">
           <p className="eyebrow mb-3">Collection</p>

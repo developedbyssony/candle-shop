@@ -13,7 +13,7 @@ export default function Footer() {
   return (
     <footer
       className="mt-auto px-5 pt-16 pb-14"
-      style={{ background: "var(--color-ink)", color: "rgba(255,255,255,0.72)" }}
+      style={{ background: "var(--color-deep)", color: "rgba(255,255,255,0.72)" }}
     >
       <div className="max-w-6xl mx-auto">
         {/* 상단: 브랜드 + 링크 */}

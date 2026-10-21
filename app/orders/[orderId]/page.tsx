@@ -1,7 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { connection } from "next/server";
-import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 import { getOrder } from "@/app/lib/orders";
 import { getPaymentMethodLabel } from "@/app/lib/checkout";
@@ -33,7 +32,6 @@ export default async function OrderCompletePage({
   if (!order) {
     return (
       <>
-        <Navbar />
         <main className="w-full max-w-md mx-auto px-5 py-24 text-center">
           <p className="text-4xl mb-5">🕯️</p>
           <p
@@ -58,7 +56,6 @@ export default async function OrderCompletePage({
 
   return (
     <>
-      <Navbar />
       <main className="w-full max-w-2xl mx-auto px-5 py-12 space-y-5">
         <div className="text-center mb-2">
           <div

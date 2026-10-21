@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 import ProductCard from "@/app/components/ProductCard";
 import ProductPurchase from "@/app/components/ProductPurchase";
@@ -59,7 +58,6 @@ export default async function ProductDetailPage({
 
   return (
     <>
-      <Navbar />
       <main className="w-full max-w-5xl mx-auto px-5 py-10 md:py-16">
         <Link
           href="/products"
