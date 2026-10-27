@@ -126,19 +126,24 @@ const OCCASION_PLACEMENT = [
 ];
 
 /*
-  '나만의 캔들 고르기' 제목 아래 풀로 붙인 종이 스티커 줄(동그라미·둘레 글씨 동그라미·둥근 네모·가로 네모).
-  문구는 사이트 다른 곳에 이미 적힌 사실만 영문으로 옮겨 씁니다
-  (손으로 빚은 캔들, 소이 왁스, 안전기준확인 마크, 카카오 상담의 선물 포장 안내, 저녁 7시).
-  입장권은 뺐지만 '7 PM'은 브랜드가 정한 "저녁 7시 불 켜는 시간"이라 스티커로 남겨 둡니다.
-  색은 오래된 인쇄물처럼 채도를 살짝 눌렀고, 기울기·높이·크기·구김(crease)은 하나씩 따로 줘
-  같은 틀로 찍은 듯 보이지 않게 합니다.
+  '나만의 캔들 고르기' 띠에 풀로 붙인 종이 스티커 다섯 장.
+  한 줄로 늘어놓으면 견본표처럼 보여서, 세 장(spot: "title")은 손글씨 둘레의 빈자리(왼쪽 위, '나만의' 오른쪽,
+  '고르기' 꼬리 아래)에, 두 장은 크라프트지의 찢긴 위·아래 테두리(spot: "top" | "bottom")에 반쯤 걸쳐 붙입니다.
+  크기·각도·높이를 다 다르게 줘 줄로 읽히지 않게 합니다.
+  - 제목 둘레: 자리·크기가 제목 상자 기준 %·cqi라 모바일에서도 같은 자리에 붙고, 손글씨 획은 가리지 않습니다.
+  - 테두리: 띠는 찢긴 모양 마스크로 잘려 있어 안에 두면 스티커도 잘리므로, 띠 바깥 겹층에 붙이고 크기는 px로 둡니다.
+  색은 원색이 앨범 위에서 혼자 튀고 많이 누르면 흐려 보여서, 같은 색 계열에서 채도를 조금만 눌러 둡니다.
+  문구는 사이트에 이미 적힌 사실만 영문으로 씁니다
+  (손으로 빚은 캔들, 소이 왁스, 안전기준확인 마크, 카카오 상담의 선물 포장 안내, 저녁 7시 불 켜는 시간).
 */
 const STICKERS = [
-  { shape: "circle", color: "#f7b51e", crease: 0, text: "Handmade", motion: "lift", place: "-rotate-[6deg] w-[104px] md:w-[148px]" },
-  { shape: "square", color: "#7ea8ec", crease: 2, text: "Soy\nWax", motion: "peel", place: "rotate-[3deg] w-[84px] md:w-[116px] md:translate-y-3" },
-  { shape: "ring", color: "#f26b2a", crease: 4, text: "Safety\nChecked", motion: "spin", place: "-rotate-[2deg] w-[100px] md:w-[136px] -translate-y-1" },
-  { shape: "wide", color: "#f68ea0", crease: 1, text: "Gift Wrap on Request", motion: "press", place: "rotate-[4deg] md:translate-y-2" },
-  { shape: "circle", color: "#9fd06a", crease: 3, text: "7 PM", motion: "swing", place: "-rotate-[4deg] w-[86px] md:w-[112px]" },
+  { spot: "title", shape: "circle", color: "#e8b44a", crease: 0, text: "Handmade", motion: "lift", place: "-left-[2%] md:-left-[8%] -top-[4%] md:-top-[12%] w-[21%] md:w-[18%] -rotate-[9deg]", size: "text-[3.3cqi] md:text-[2.8cqi]" },
+  { spot: "title", shape: "circle", color: "#a4c87b", crease: 3, text: "7 PM", motion: "swing", place: "right-[2%] md:right-[5%] -top-[1%] md:-top-[4%] w-[15%] md:w-[13%] rotate-[7deg]", size: "text-[3.2cqi] md:text-[2.7cqi]" },
+  { spot: "title", shape: "ring", color: "#e07240", crease: 4, text: "Safety\nChecked", motion: "spin", place: "left-[62%] md:left-[60%] top-[92%] md:top-[90%] w-[22%] md:w-[19%] -rotate-[3deg]", size: "text-[2.9cqi] md:text-[2.6cqi]" },
+  // 위 테두리 오른편: 앨범 종이와 크라프트지 사이에 반쯤 걸쳐 붙입니다.
+  { spot: "top", shape: "square", color: "#88a8da", crease: 2, text: "Soy\nWax", motion: "peel", place: "right-[34%] md:right-[17%] -top-[22px] md:-top-[26px] w-[54px] md:w-[68px] rotate-[8deg]", size: "text-[12px] md:text-[15px]" },
+  // 아래 테두리 왼편: 찢긴 아래 가장자리에 걸쳐 다음 구간 쪽으로 반쯤 내려옵니다.
+  { spot: "bottom", shape: "wide", color: "#e696a3", crease: 1, text: "Gift Wrap on Request", motion: "press", place: "left-[5%] md:left-[13%] -bottom-[18px] md:-bottom-[20px] -rotate-[5deg]", size: "text-[12px] md:text-[15px]" },
 ] as const;
 
 function Arrow() {
@@ -154,6 +159,8 @@ export default function Home() {
 
         {/* ── 고르는 방법 세 가지 ─────────────────────────────────── */}
         <section>
+          {/* 띠와 테두리 스티커를 한 상자에 묶어, 스티커 자리를 띠의 위·아래 끝 기준으로 잡습니다. */}
+          <div className="relative">
           {/* 크라프트지 띠를 위아래로 찢어 앨범에 붙인 것처럼 보이게 합니다. */}
           <div className="torn-band" style={{ backgroundColor: "var(--color-beige)" }}>
             <div className="max-w-6xl mx-auto px-5 pt-16 pb-14 md:pt-24 md:pb-24 text-center">
@@ -168,41 +175,55 @@ export default function Home() {
                 직접 쓴 캘리그래피라 폰트 대신 이미지로 넣습니다(배경은 투명).
                 한 장으로 쓰면 짧은 첫 줄 '나만의'가 왼쪽에 붙어 오른쪽이 비어 보여서, 줄마다 잘라 둔 그림을
                 각각 가운데에 맞춰 쌓습니다. 폭(%)은 원본(1096px)에서 각 줄이 차지하던 너비라 두 줄 글씨 크기가 같게 유지됩니다.
+                붓 획이 가늘어 띠 위에서 약해 보여서, 두 그림 모두 획을 바깥으로 8px씩 넓혀 굵게 구웠습니다(그만큼 그림도 16px씩 커짐).
                 h2의 이름은 aria-label로 한 번에 읽히게 하고, 그림 두 장은 장식으로 숨깁니다.
               */}
-              <h2 aria-label="나만의 캔들 고르기" className="w-full max-w-[540px] mx-auto flex flex-col items-center">
+              {/* 제목과 스티커를 한 상자에 묶어 스티커 자리를 제목 기준으로 잡습니다(@container: 스티커 글씨도 이 폭을 따라 커짐). */}
+              <div className="@container relative w-full max-w-[540px] mx-auto mt-6 md:mt-10 mb-16 md:mb-20">
+              <h2 aria-label="나만의 캔들 고르기" className="w-full flex flex-col items-center">
                 <Image
                   src="/brand/choose-headline-1.png"
                   alt=""
-                  width={557}
-                  height={194}
-                  className="ink-art w-[50.8%] h-auto"
+                  width={573}
+                  height={210}
+                  className="ink-art w-[52.3%] h-auto"
                   sizes="(max-width: 767px) 46vw, 275px"
                 />
                 <Image
                   src="/brand/choose-headline-2.png"
                   alt=""
-                  width={960}
-                  height={273}
-                  className="ink-art w-[87.6%] h-auto mt-[1.5%]"
+                  width={976}
+                  height={289}
+                  className="ink-art w-[89%] h-auto"
                   sizes="(max-width: 767px) 79vw, 473px"
                 />
               </h2>
-              {/* 제목 아래 크라프트지 띠 위에 붙인 종이 스티커 줄 */}
-              <ul
-                aria-label="이브닝 캔들의 약속"
-                className="mt-10 md:mt-14 flex flex-wrap items-center justify-center gap-x-3 gap-y-4 md:gap-x-8"
-              >
-                {STICKERS.map(({ shape, color, crease, motion, text, place }) => (
-                  <li key={text}>
-                    {/* 참고한 붙임 스티커처럼 글자를 크고 굵게(소품 글씨라 다섯 단계 글자 크기의 예외). */}
-                    <Sticker shape={shape} color={color} crease={crease} motion={motion} className={`${place} text-[16px] md:text-[21px] whitespace-pre-line`}>
+              <ul aria-label="이브닝 캔들의 약속">
+                {STICKERS.filter((sticker) => sticker.spot === "title").map(({ shape, color, crease, motion, text, place, size }) => (
+                  <li key={text} className={`absolute ${place}`}>
+                    {/* 붙임 스티커처럼 글자를 크고 굵게(소품 글씨라 다섯 단계 글자 크기의 예외). */}
+                    <Sticker shape={shape} color={color} crease={crease} motion={motion} className={`w-full ${size} whitespace-pre-line`}>
                       {text}
                     </Sticker>
                   </li>
                 ))}
               </ul>
+              </div>
             </div>
+          </div>
+          {/*
+            찢긴 테두리에 걸친 스티커. 띠 마스크 밖이라 잘리지 않고, 가운데 폭(max-w-6xl) 안에서 자리를 잡습니다.
+            바로 아래 구간 글자보다 위에 보이도록 z-10만 줍니다(아래 구간 제목과는 겹치지 않는 높이).
+          */}
+          <ul aria-label="이브닝 캔들의 약속(테두리)" className="absolute inset-0 max-w-6xl mx-auto z-10 pointer-events-none">
+            {STICKERS.filter((sticker) => sticker.spot !== "title").map(({ shape, color, crease, motion, text, place, size }) => (
+              <li key={text} className={`absolute pointer-events-auto ${place}`}>
+                <Sticker shape={shape} color={color} crease={crease} motion={motion} className={`w-full ${size} whitespace-pre-line`}>
+                  {text}
+                </Sticker>
+              </li>
+            ))}
+          </ul>
           </div>
 
           {/*
