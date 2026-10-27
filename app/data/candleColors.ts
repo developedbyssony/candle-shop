@@ -1,4 +1,4 @@
-import { ProductColor } from "@/app/context/CartContext";
+import { ProductColor } from "@/app/data/types";
 
 function hexToRgb(hex: string): [number, number, number] {
   const value = hex.replace("#", "");

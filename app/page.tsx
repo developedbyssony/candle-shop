@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { products } from "@/app/data/products";
-import type { Product } from "@/app/context/CartContext";
+import type { Product } from "@/app/data/types";
 import HeroCollage from "@/app/components/HeroCollage";
 import Reveal from "@/app/components/Reveal";
 import Footer from "@/app/components/Footer";

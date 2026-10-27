@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Special_Elite } from "next/font/google";
-import { Providers } from "@/app/providers";
 import CandleColorFilters from "@/app/components/CandleColorFilters";
 import "./globals.css";
 
@@ -64,7 +63,7 @@ export default function RootLayout({
       {/* 바탕(앨범 종이 색과 얼룩)은 globals.css의 body가 맡습니다. */}
       <body className="min-h-full flex flex-col">
         <CandleColorFilters />
-        <Providers>{children}</Providers>
+        {children}
       </body>
     </html>
   );

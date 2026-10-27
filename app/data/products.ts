@@ -1,4 +1,4 @@
-import { Product } from "@/app/context/CartContext";
+import { Product } from "@/app/data/types";
 import {
   BALL_CANDLE,
   CHEESE_CANDLE,

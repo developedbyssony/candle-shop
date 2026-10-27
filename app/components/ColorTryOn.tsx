@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
-import type { ProductColor } from "@/app/context/CartContext";
+import type { ProductColor } from "@/app/data/types";
 
 /**
  * 홈의 '색 골라 보기'. 흰 무대 위에 3D 유리컵 캔들 하나를 세워 두고, 아래 색 동그라미를 누르면
