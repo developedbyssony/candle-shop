@@ -178,7 +178,7 @@ export const CUPCAKE_CANDLE = createPalette(
  * object-fit:cover가 사진을 가로로 잘라내는 화면에서는 필터가 보는 좌표와
  * 실제 화면 좌표가 어긋나 버그가 났습니다. 그래서 이 세 상품은 색상 매트릭스로
  * 사진 전체를 통째로 재색상화하고(심지도 같이 바뀜), 심지 부분만 원본 그대로
- * 오려낸 이미지를 그 위에 필터 없이 얹는 방식(ProductCard 등에서 wickImage)으로
+ * 오려낸 이미지를 그 위에 필터 없이 얹는 방식(wickImage)으로
  * 심지를 보호합니다. 오려내는 작업은 scripts/extract-wick.js 참고.
  */
 export const TWIST_CANDLE = createPalette("twist", "#dcbd8a", "ivory");

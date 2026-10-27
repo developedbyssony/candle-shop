@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Playfair_Display } from "next/font/google";
+import { Playfair_Display, Special_Elite } from "next/font/google";
 import { Providers } from "@/app/providers";
 import CandleColorFilters from "@/app/components/CandleColorFilters";
 import "./globals.css";
@@ -11,6 +11,13 @@ const playfair = Playfair_Display({
   variable: "--font-display",
 });
 
+// 영문 말머리(.eyebrow)용 타자기체. 앨범에 타자로 쳐 붙인 라벨 느낌을 냅니다. 굵기는 400 하나뿐입니다.
+const specialElite = Special_Elite({
+  subsets: ["latin"],
+  weight: "400",
+  display: "swap",
+  variable: "--font-typewriter",
+});
 export const metadata: Metadata = {
   title: "Evening Candle",
   description: "자연에서 온 핸드메이드 소이 캔들",
@@ -27,7 +34,7 @@ export default function RootLayout({
     <html
       lang="ko"
       data-scroll-behavior="smooth"
-      className={`h-full ${playfair.variable}`}
+      className={`h-full ${playfair.variable} ${specialElite.variable}`}
       // head의 스크립트가 그리기 전에 data-theme을 붙일 수 있어 그 차이는 경고하지 않게 합니다.
       suppressHydrationWarning
     >
@@ -45,7 +52,8 @@ export default function RootLayout({
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
         />
       </head>
-      <body className="min-h-full flex flex-col" style={{ background: "var(--color-cream)" }}>
+      {/* 바탕(앨범 종이 색과 얼룩)은 globals.css의 body가 맡습니다. */}
+      <body className="min-h-full flex flex-col">
         <CandleColorFilters />
         <Providers>{children}</Providers>
       </body>

@@ -42,3 +42,7 @@ next-env.d.ts
 
 # claude code (로컬 전용 설정)
 .claude/settings.local.json
+
+# impeccable 스킬 보조 파일(도구용, 앱 코드 아님)
+/.agents/
+/.impeccable/
