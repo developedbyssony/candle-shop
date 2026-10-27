@@ -3,30 +3,26 @@ import Link from "next/link";
 
 const KAKAO_OPEN_CHAT_URL = "https://open.kakao.com/o/srDgHd2h";
 
-const SHOP_LINKS = [
-  { href: "/", label: "홈" },
-  { href: "/products", label: "전체 상품" },
-  { href: "/cart", label: "장바구니" },
-];
-
 export default function Footer() {
   return (
+    // 앨범 뒷표지처럼 어두운 종이를 위쪽만 찢어 붙입니다(.torn-top).
     <footer
-      className="mt-auto px-5 pt-16 pb-14"
-      style={{ background: "var(--color-ink)", color: "rgba(255,255,255,0.72)" }}
+      className="torn-top mt-auto px-5 pt-20 pb-14"
+      style={{ backgroundColor: "var(--color-deep)", color: "rgba(255,255,255,0.72)" }}
     >
       <div className="max-w-6xl mx-auto">
-        {/* 상단: 브랜드 + 링크 */}
+        {/* 상단: 브랜드 + 상담 (홈 하나뿐인 사이트라 바로가기 링크는 두지 않습니다) */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8 pb-12">
           <div className="md:col-span-5">
-            <p className="font-display text-2xl text-white mb-4">evening candle</p>
+            <p className="font-display text-lg text-white mb-4">evening candle</p>
             <p className="text-[13px] leading-relaxed max-w-xs">
-              숲과 린넨, 늦은 오후의 햇살에서 영감을 받은 핸드메이드 소이 캔들.
+              하루의 끝에, 나를 위한 작은 빛. 손으로 하나씩 굳혀 만드는 소이 캔들.
             </p>
           </div>
 
-          <div className="md:col-span-4">
-            <p className="text-[11px] tracking-[0.2em] uppercase text-white mb-4">
+          <div className="md:col-span-7">
+            {/* 말머리는 다른 섹션처럼 작게(13px)·굵게만 두고, 읽기 어려운 넓은 자간은 쓰지 않습니다. */}
+            <p className="text-[13px] font-medium text-white mb-4">
               상담 문의
             </p>
             <p className="text-[13px] leading-relaxed mb-5">
@@ -45,21 +41,6 @@ export default function Footer() {
               카카오톡 상담하기
             </Link>
           </div>
-
-          <nav className="md:col-span-3">
-            <p className="text-[11px] tracking-[0.2em] uppercase text-white mb-4">
-              바로가기
-            </p>
-            <ul className="space-y-2.5">
-              {SHOP_LINKS.map(({ href, label }) => (
-                <li key={href}>
-                  <Link href={href} className="text-[13px] transition-opacity hover:opacity-70">
-                    {label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
         </div>
 
         {/* 하단: 사업자 정보 */}
@@ -67,7 +48,7 @@ export default function Footer() {
           className="pt-8 flex flex-col md:flex-row md:items-center md:justify-between gap-8"
           style={{ borderTop: "1px solid rgba(255,255,255,0.14)" }}
         >
-          <div className="text-[12px] leading-6">
+          <div className="text-[13px] leading-6">
             <p className="text-white font-medium mb-1">이브닝캔들</p>
             <p>대표 : 장효진 &nbsp;|&nbsp; 사업자등록번호 : 588-39-01080</p>
             <p>주소 : 서울시 노원구 노원로 30길-32 중앙하이츠빌라 103동 501호</p>

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import { Playfair_Display } from "next/font/google";
-import { Providers } from "@/app/providers";
+import { Playfair_Display, Special_Elite } from "next/font/google";
 import CandleColorFilters from "@/app/components/CandleColorFilters";
 import "./globals.css";
 
@@ -11,9 +10,25 @@ const playfair = Playfair_Display({
   variable: "--font-display",
 });
 
+// 영문 말머리(.eyebrow)용 타자기체. 앨범에 타자로 쳐 붙인 라벨 느낌을 냅니다. 굵기는 400 하나뿐입니다.
+const specialElite = Special_Elite({
+  subsets: ["latin"],
+  weight: "400",
+  display: "swap",
+  variable: "--font-typewriter",
+});
 export const metadata: Metadata = {
   title: "Evening Candle",
   description: "자연에서 온 핸드메이드 소이 캔들",
+  // 링크를 카톡 등에 붙였을 때 뜨는 미리보기 글. 썸네일은 app/opengraph-image.jpg(scripts/make-og-image.js로 구움)를
+  // Next가 알아서 붙입니다. 카톡은 og 태그를 먼저 읽으므로 한 줄 소개를 여기에 둡니다.
+  openGraph: {
+    title: "evening candle",
+    description: "하루의 끝에, 나를 위한 작은 빛 · 수제 소이 캔들",
+    siteName: "evening candle",
+    locale: "ko_KR",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
@@ -22,8 +37,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className={`h-full ${playfair.variable}`}>
+    // data-scroll-behavior: globals.css의 scroll-behavior:smooth를 라우트 이동에도
+    // 그대로 쓰겠다는 표시입니다. 목록 ↔ 상세를 오갈 때 스크롤 위치가 튀지 않게 합니다.
+    <html
+      lang="ko"
+      data-scroll-behavior="smooth"
+      className={`h-full ${playfair.variable} ${specialElite.variable}`}
+      // head의 스크립트가 그리기 전에 data-theme을 붙일 수 있어 그 차이는 경고하지 않게 합니다.
+      suppressHydrationWarning
+    >
       <head>
+        {/* 지난번에 불을 꺼 뒀으면(다크모드) 화면을 그리기 전에 먼저 복원해 밝은 화면이 번쩍이지 않게 합니다. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(localStorage.getItem("theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}`,
+          }}
+        />
         {/* Pretendard는 외부 CDN이라 연결을 미리 열어 첫 렌더를 앞당깁니다. */}
         <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="" />
         <link
@@ -31,9 +60,10 @@ export default function RootLayout({
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
         />
       </head>
-      <body className="min-h-full flex flex-col" style={{ background: "var(--color-cream)" }}>
+      {/* 바탕(앨범 종이 색과 얼룩)은 globals.css의 body가 맡습니다. */}
+      <body className="min-h-full flex flex-col">
         <CandleColorFilters />
-        <Providers>{children}</Providers>
+        {children}
       </body>
     </html>
   );

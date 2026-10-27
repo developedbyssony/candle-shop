@@ -1,16 +1,51 @@
 @import "tailwindcss";
 
+/*
+  빈티지 스크랩북 팔레트: 오래된 앨범 종이(cream) 위에 크라프트지 띠(beige), 세피아 잉크 글씨(ink).
+  사진 인화지·메모지는 테마와 상관없이 늘 종이색이라, 그 위 글씨는 --color-paper-ink를 씁니다.
+*/
 :root {
-  --color-cream: #faf8f4;
-  --color-beige: #f0ebe0;
-  --color-sand: #e8dfd0;
-  --color-sage: #8a9e8a;
-  --color-sage-dark: #6e826e;
-  --color-brown: #6b5744;
-  --color-text: #2c2c2c;
-  --color-muted: #7c7c7c;
-  /* 에디토리얼 대비용 딥 잉크 — 버튼·푸터에만 사용 */
-  --color-ink: #1e1b17;
+  --color-cream: #f4ecdd;
+  --color-beige: #e8dcc4;
+  --color-sand: #d6c5a6;
+  --color-sage: #7d927c;
+  --color-sage-dark: #5f735f;
+  --color-brown: #6b4a32;
+  --color-text: #33291f;
+  /* 종이 바탕 대비 약 5:1 */
+  --color-muted: #6a5b4b;
+  /* 세피아 잉크 — 로고·버튼·제목 */
+  --color-ink: #2b2118;
+  /* 인화지 테두리와 메모지(라이트·다크 모두 종이색) */
+  --color-photo: #fbf7ef;
+  --color-paper-ink: #2b2118;
+  /* 늘 어두운 바탕(푸터·음악 버튼·앱 아이콘). 다크모드에서 ink가 밝아져도 이건 그대로입니다. */
+  --color-deep: #1e1b17;
+
+  /*
+    글자 크기는 아래 다섯 단계만 씁니다. 크기가 열 가지 넘게 섞이면 무엇이 중요한지 흐려져서
+    '작게(13) · 본문(16) · 강조(18) · 제목 · 로고' 사이를 크게 벌려 둡니다.
+    작게(13px)보다 작은 글씨는 읽히지 않아 쓰지 않습니다. 로고는 HeroCollage가 칸 너비로 정합니다.
+  */
+  --text-small: 0.8125rem;
+  --text-body: 1rem;
+  --text-lead: 1.125rem;
+  --text-heading: clamp(2rem, 8vw, 3.25rem);
+}
+
+/*
+  히어로 메모용 픽셀 글꼴 Mona12 (SIL OFL, public/fonts/Mona-OFL.txt).
+  원본은 1MB가 넘어서 메모에 쓰는 글자만 남긴 1KB짜리 파일을 직접 둡니다.
+  메모 문구를 바꾸면 이 파일도 새로 잘라야 합니다(없는 글자는 Pretendard로 보입니다).
+*/
+@font-face {
+  font-family: "Mona12 Memo";
+  src: url("/fonts/mona12-memo.woff2") format("woff2");
+  font-display: swap;
+}
+
+.font-pixel {
+  font-family: "Mona12 Memo", 'Pretendard', sans-serif;
 }
 
 * {
@@ -21,6 +56,11 @@ html {
   scroll-behavior: smooth;
 }
 
+/*
+  앨범 종이: 한 가지 색으로만 칠합니다.
+  예전에는 모서리에 빛 받은 곳·바랜 얼룩 그라데이션을 깔았는데, 불을 켜고 끌 때 그 얼룩이
+  화면 위쪽 모서리에서 번쩍이며 바뀌어 보여서 뺐습니다.
+*/
 body {
   background: var(--color-cream);
   color: var(--color-text);
@@ -35,13 +75,68 @@ body {
   letter-spacing: -0.015em;
 }
 
-/* 섹션 상단 소제목 (WHO WE ARE 류) */
+/* 섹션 상단 소제목 (WHO WE ARE 류). 타자기체라 대문자 자간을 조금 좁혀도 충분히 벌어져 보입니다. */
 .eyebrow {
+  font-family: var(--font-typewriter), 'Pretendard', ui-monospace, monospace;
   font-size: 0.6875rem;
-  letter-spacing: 0.32em;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--color-muted);
-  font-weight: 500;
+  /* Special Elite는 400뿐이라 더 굵게 주면 브라우저가 가짜 볼드를 그립니다. */
+  font-weight: 400;
+}
+
+/*
+  히어로 로고 아래 부제(HANDMADE SOY CANDLE)는 타이틀과 같은 먹색으로 둡니다.
+  다크모드에서는 ink가 밝아져 함께 밝아집니다.
+*/
+.hero-subtitle {
+  color: var(--color-ink);
+}
+
+/*
+  부제 타자기(HeroCollage의 Typewriter). 글자마다 --type-at 시각에 찍히고(visibility는 중간값 없이 바로 바뀜),
+  커서 '_'는 방금 찍힌 글자 바로 뒤에 한 박자(70ms)만 보였다가 다음 글자로 넘어갑니다.
+  마지막 글자 뒤 커서는 받은 컴포넌트처럼 0.4초 간격으로 계속 깜박입니다.
+*/
+@keyframes type-in {
+  from {
+    visibility: hidden;
+  }
+  to {
+    visibility: visible;
+  }
+}
+@keyframes cursor-here {
+  from,
+  to {
+    visibility: visible;
+  }
+}
+@keyframes cursor-blink {
+  0%,
+  49.9% {
+    visibility: visible;
+  }
+  50%,
+  100% {
+    visibility: hidden;
+  }
+}
+.type-char {
+  position: relative;
+  animation: type-in 0s linear var(--type-at) both;
+}
+/* 커서는 글자 뒤에 겹쳐 띄워 줄 길이에 끼어들지 않게 합니다. */
+.type-char::after {
+  content: "_";
+  position: absolute;
+  left: 100%;
+  visibility: hidden;
+  animation: cursor-here 70ms linear var(--type-at);
+}
+.type-char.is-last::after {
+  animation: cursor-blink 0.8s linear var(--type-at) infinite;
 }
 
 /* 한글 대제목 — 얇고 넓게, 에디토리얼 톤 */
@@ -94,37 +189,458 @@ body {
   opacity: 0.82;
 }
 
+/* 어두운 배경 섹션(색 이야기 띠)에서 쓰는 테두리 버튼 */
+.btn-outline-light {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  color: #fff;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.btn-outline-light:hover {
+  background: #fff;
+  color: var(--color-ink);
+}
+
+/* 히어로 콜라주 조각이 살짝 커지며 내려앉는 효과 */
+@keyframes collage-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-collage-in {
+  animation: collage-in 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
 /*
-  모바일 폭이 되는 순간 히어로 사진이 위에서 아래로 펼쳐지며
-  내비게이션 아래 화면 전체를 채웁니다.
-  (미디어 쿼리 안에서만 animation을 주기 때문에 창을 줄여 모바일이 되는
-   시점마다 다시 재생됩니다.)
+  빈티지 사진: 살짝 바랜 색 + 그을린 듯한 갈색 가장자리.
+  사진을 감싼 상자(position: relative, overflow: hidden)에 붙입니다.
+  필름 입자(SVG 노이즈 필터)는 쓰지 않습니다(CLAUDE.md의 금지 규칙).
 */
-@keyframes hero-drop {
+.vintage-photo img {
+  filter: sepia(0.32) saturate(0.82) contrast(1.06) brightness(0.97);
+}
+
+.vintage-photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow:
+    inset 0 0 0 2px rgba(74, 46, 22, 0.55),
+    inset 0 0 18px 4px rgba(92, 58, 26, 0.55),
+    inset 0 0 60px 10px rgba(140, 96, 52, 0.25);
+}
+
+/* 사진을 둘러싼 누렇게 바랜 인화지 테두리 */
+.aged-paper {
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(255, 252, 240, 0.9), transparent 60%),
+    radial-gradient(ellipse at 80% 90%, rgba(196, 160, 112, 0.35), transparent 55%),
+    #efe3cb;
+  box-shadow: inset 0 0 14px rgba(150, 112, 66, 0.35);
+}
+
+/* 반투명 마스킹 테이프(양 끝을 지그재그로 뜯은 모양) */
+.masking-tape {
+  position: absolute;
+  height: 1.35rem;
+  background: rgba(226, 210, 178, 0.78);
+  box-shadow: 0 1px 2px rgba(30, 27, 23, 0.12);
+  clip-path: polygon(0 8%, 4% 0, 96% 6%, 100% 0, 97% 50%, 100% 100%, 95% 92%, 3% 100%, 0 94%, 3% 50%);
+  backdrop-filter: blur(0.5px);
+}
+
+/* 줄 노트 종이: 하늘색 가로줄 + 왼쪽의 붉은 여백선 */
+.ruled-paper {
+  background:
+    linear-gradient(90deg, transparent 1.35rem, rgba(200, 110, 96, 0.45) 1.35rem, rgba(200, 110, 96, 0.45) calc(1.35rem + 1px), transparent calc(1.35rem + 1px)),
+    repeating-linear-gradient(to bottom, transparent 0, transparent calc(1lh - 1px), rgba(130, 160, 180, 0.35) calc(1lh - 1px), rgba(130, 160, 180, 0.35) 1lh),
+    var(--color-photo);
+}
+
+/*
+  ── 스크랩북 공용 소품 ───────────────────────────────────────
+  인화 사진: 종이색 테두리 + 아래쪽 여백을 넓게 둔 즉석 사진. 그림자는 짧게(8px 이하) 둡니다.
+  기울기는 각 요소에 rotate-[…]로 직접 주고, 같은 줄에서 방향을 번갈아 씁니다.
+*/
+.snapshot {
+  position: relative;
+  background: var(--color-photo);
+  padding: 0.5rem 0.5rem 0;
+  box-shadow:
+    0 1px 2px rgba(43, 33, 24, 0.18),
+    0 6px 8px -4px rgba(43, 33, 24, 0.22);
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* 인화 사진 아래 여백에 적는 짧은 메모 */
+.snapshot-caption {
+  color: var(--color-paper-ink);
+  padding: 0.7rem 0.25rem 0.85rem;
+}
+
+/* 상품 사진처럼 반듯하게 끼워 둔 인화지(아래 여백 없이 테두리만) */
+.print-frame {
+  background: var(--color-photo);
+  padding: 0.45rem;
+  box-shadow:
+    0 1px 2px rgba(43, 33, 24, 0.16),
+    0 6px 8px -4px rgba(43, 33, 24, 0.2);
+}
+
+/*
+ * 찢은 종이 띠. 히어로 뒤 크라프트지와 같은 방식(scripts/make-torn-edges.js)으로 구운 이미지 세 가지를 겹칩니다.
+ * - 모양: 찢긴 위·아래 가장자리 마스크 + 가운데는 꽉 찬 마스크. 가로 1200px마다 이어 붙어도 이음매가 없습니다.
+ * - 단면: 겉면이 벗겨져 밝은 펄프가 드러난 띠(::before 위, ::after 아래). 흰 반투명이라 어떤 종이색에도 어울립니다.
+ * - 결: 회색 얼룩 타일을 soft-light로 얹어, 바탕색(토큰)은 그대로 두고 얼룩·섬유 점만 더합니다(띠에만).
+ * 종이색은 부르는 쪽에서 background-color로 줍니다(background 단축 속성을 쓰면 결 이미지가 지워집니다).
+ */
+.torn-band,
+.torn-sheet,
+.torn-top {
+  position: relative;
+}
+/* 결은 크라프트지 띠에만. 어두운 푸터에 얹으면 얼룩이 바탕을 밝혀 물 빠진 색처럼 보여서, 푸터는 원색 그대로 둡니다. */
+.torn-band {
+  background-image: url(/home/kraft-grain.webp);
+  background-size: 400px 400px;
+  background-blend-mode: soft-light;
+}
+/* 위아래를 찢은 종이: 크라프트지 띠, 그리고 색 골라 보기의 흰 무대(.torn-sheet, 결 없이 흰 종이 그대로) */
+.torn-band,
+.torn-sheet {
+  -webkit-mask:
+    url(/home/torn-top-mask.webp) left top / 1200px 48px repeat-x,
+    url(/home/torn-bottom-mask.webp) left bottom / 1200px 48px repeat-x,
+    linear-gradient(#000 0 0) center / 100% calc(100% - 96px) no-repeat;
+  mask:
+    url(/home/torn-top-mask.webp) left top / 1200px 48px repeat-x,
+    url(/home/torn-bottom-mask.webp) left bottom / 1200px 48px repeat-x,
+    linear-gradient(#000 0 0) center / 100% calc(100% - 96px) no-repeat;
+}
+/* 위쪽만 찢은 종이(푸터) */
+.torn-top {
+  -webkit-mask:
+    url(/home/torn-top-mask.webp) left top / 1200px 48px repeat-x,
+    linear-gradient(#000 0 0) bottom / 100% calc(100% - 48px) no-repeat;
+  mask:
+    url(/home/torn-top-mask.webp) left top / 1200px 48px repeat-x,
+    linear-gradient(#000 0 0) bottom / 100% calc(100% - 48px) no-repeat;
+}
+.torn-band::before,
+.torn-band::after,
+.torn-sheet::before,
+.torn-sheet::after,
+.torn-top::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 48px;
+  pointer-events: none;
+  background-size: 1200px 48px;
+  background-repeat: repeat-x;
+}
+.torn-band::before,
+.torn-sheet::before,
+.torn-top::before {
+  top: 0;
+  background-image: url(/home/torn-top-fringe.webp);
+}
+.torn-band::after,
+.torn-sheet::after {
+  bottom: 0;
+  background-image: url(/home/torn-bottom-fringe.webp);
+}
+/* 어두운 종이(다크모드 띠, 늘 어두운 푸터)에서는 흰 단면이 빛나는 선처럼 튀어서 펄프가 은은하게만 보이게 줄입니다. */
+html[data-theme="dark"] .torn-band::before,
+html[data-theme="dark"] .torn-band::after,
+.torn-top::before {
+  opacity: 0.36;
+}
+/*
+ * 흰 종이는 단면도 흰색이라 흰 펄프가 보이지 않습니다. 실제 흰 종이를 찢으면 일어난 섬유 아래로 옅은 그늘이 지므로,
+ * 단면 이미지를 뒤집어(흰색 → 검정) 아주 옅게 깔아 보풀 자국만 회색으로 남깁니다.
+ */
+.torn-sheet::before,
+.torn-sheet::after {
+  filter: invert(1);
+  opacity: 0.16;
+}
+
+/*
+  ── 낡은 인화 사진(.worn-print) ──────────────────────────────
+  오래 들고 다닌 사진처럼 테두리가 누렇게 그을리고, 모서리가 떨어져 나가고, 가장자리에 손때가 탄 모양.
+  바깥 상자는 그을린 테두리(빛 받은 곳은 밝고 아래쪽은 탄 갈색), 안쪽 .worn-print-photo는 사진 가장자리를
+  어둡게 누르고 모서리에 닳아서 하얗게 일어난 자국을 얹습니다. 질감은 그라데이션으로만 냅니다(노이즈 금지).
+  clip-path가 그림자를 잘라 내므로, 그림자는 감싼 부모에 filter: drop-shadow(8px 이하)로 줍니다.
+*/
+.worn-print {
+  padding: 4.5%;
+  border-radius: 6px;
+  background:
+    radial-gradient(ellipse 70% 50% at 25% 15%, rgba(245, 226, 190, 0.85), transparent 70%),
+    radial-gradient(ellipse 60% 55% at 85% 90%, rgba(96, 58, 26, 0.75), transparent 70%),
+    radial-gradient(ellipse 40% 30% at 5% 70%, rgba(120, 76, 38, 0.5), transparent 70%),
+    #c89c64;
+  clip-path: polygon(0% 2.43%, 3% 1.91%, 6% 0.56%, 9% 0.88%, 12% 0.23%, 15% 0.81%, 18% 0.65%, 21% 0.76%, 24% 0.23%, 27% 0.01%, 30% 0.11%, 33% 0.11%, 36% 0.25%, 39% 0.46%, 42% 0.81%, 45% 0.84%, 48% 0.38%, 51% 0.00%, 54% 0.35%, 57% 0.25%, 60% 0.77%, 63% 0.06%, 66% 0.44%, 69% 0.78%, 72% 0.34%, 75% 0.43%, 78% 0.42%, 81% 0.67%, 84% 0.59%, 87% 0.06%, 90% 0.52%, 93% 0.40%, 96% 0.77%, 99% 2.03%, 97.67% 0%, 98.12% 3%, 99.70% 6%, 99.53% 9%, 99.99% 12%, 99.93% 15%, 99.43% 18%, 99.32% 21%, 99.14% 24%, 99.98% 27%, 99.46% 30%, 99.64% 33%, 99.90% 36%, 99.17% 39%, 99.28% 42%, 99.73% 45%, 99.84% 48%, 99.47% 51%, 99.99% 54%, 99.32% 57%, 99.83% 60%, 99.39% 63%, 99.93% 66%, 100.00% 69%, 99.38% 72%, 99.49% 75%, 99.59% 78%, 99.56% 81%, 99.43% 84%, 99.14% 87%, 99.57% 90%, 99.36% 93%, 98.46% 96%, 98.19% 99%, 100% 97.73%, 97% 98.23%, 94% 99.38%, 91% 99.55%, 88% 99.13%, 85% 99.33%, 82% 99.94%, 79% 99.24%, 76% 99.40%, 73% 99.74%, 70% 99.22%, 67% 99.22%, 64% 99.46%, 61% 99.60%, 58% 99.32%, 55% 99.64%, 52% 99.11%, 49% 99.32%, 46% 99.89%, 43% 99.17%, 40% 99.75%, 37% 99.85%, 34% 99.41%, 31% 99.33%, 28% 99.13%, 25% 99.45%, 22% 99.49%, 19% 99.16%, 16% 99.82%, 13% 99.85%, 10% 99.58%, 7% 99.24%, 4% 98.44%, 1% 98.24%, 2.96% 100%, 1.37% 97%, 0.87% 94%, 0.86% 91%, 0.70% 88%, 0.68% 85%, 0.23% 82%, 0.58% 79%, 0.71% 76%, 0.25% 73%, 0.34% 70%, 0.44% 67%, 0.40% 64%, 0.34% 61%, 0.24% 58%, 0.14% 55%, 0.06% 52%, 0.49% 49%, 0.76% 46%, 0.79% 43%, 0.66% 40%, 0.82% 37%, 0.18% 34%, 0.23% 31%, 0.71% 28%, 0.43% 25%, 0.47% 22%, 0.79% 19%, 0.09% 16%, 0.86% 13%, 0.55% 10%, 0.46% 7%, 1.58% 4%, 2.10% 1%);
+}
+
+.worn-print-photo {
+  position: relative;
+  overflow: hidden;
+  border-radius: 3px;
+}
+
+.worn-print-photo img {
+  filter: sepia(0.28) saturate(0.85) contrast(1.08) brightness(0.96);
+}
+
+.worn-print-photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 2% 3%, rgba(244, 228, 200, 0.7) 0 2.5%, transparent 4%),
+    radial-gradient(circle at 98% 2%, rgba(244, 228, 200, 0.55) 0 1.8%, transparent 3%),
+    radial-gradient(circle at 97% 97%, rgba(244, 228, 200, 0.6) 0 2.2%, transparent 3.6%),
+    radial-gradient(ellipse 30% 4% at 60% 0%, rgba(244, 228, 200, 0.35), transparent 100%);
+  box-shadow:
+    inset 0 0 0 1.5px rgba(40, 22, 10, 0.7),
+    inset 0 0 16px 4px rgba(30, 16, 6, 0.5),
+    inset 0 0 48px 8px rgba(60, 34, 14, 0.22);
+}
+
+/*
+  ── 다이컷 스티커(Sticker 컴포넌트) ──────────────────────────
+  칼선 따라 남은 크림색 여백(바깥 테두리) + 안쪽 점선 + 짧은 그림자. 별·톱니·삼각 모양은 SVG로 그립니다.
+  색은 오래된 인쇄물처럼 채도를 살짝 눌렀고, 글씨는 늘 종이 잉크색입니다.
+*/
+/*
+  풀로 붙인 종이 스티커. 바닥에 납작하게 붙어 있어 그림자는 아주 짧게만 둡니다.
+  구김은 ::after에 그라데이션 줄 몇 개를 겹쳐 그립니다(밝은 줄 = 솟은 주름, 어두운 줄 = 접힌 골).
+*/
+.sticker {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  overflow: hidden;
+  isolation: isolate;
+  text-align: center;
+  /* 색 종이 위에서 또렷하게 읽히도록 세피아 먹색보다 진한 검정. 종이 소품이라 테마와 상관없이 같습니다. */
+  color: #000000;
+  /* 히어로 워드마크와 같은 Playfair Display를 가장 굵게(900). 스티커 문구가 영문이라 로고와 한 목소리로 읽힙니다. */
+  font-family: var(--font-display), Georgia, serif;
+  font-weight: 900;
+  line-height: 1.05;
+  box-shadow: 0 1px 1.5px rgba(43, 33, 24, 0.22), 0 2px 5px rgba(43, 33, 24, 0.1);
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.sticker::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  border-radius: inherit;
+  /* 종이 가장자리가 살짝 들떠 빛을 받는 테두리 + 구김 줄 */
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18), inset 0 -2px 6px rgba(43, 33, 24, 0.08);
+  background: var(--crease);
+}
+/*
+  구김 모양 다섯 가지. 각도·자리를 모두 다르게 골랐습니다.
+  가는 흰 줄은 글자 위로 X자처럼 그어져 보여서, 폭이 넓고 옅은 띠(빛 받는 쪽 → 그늘 쪽)로 부드럽게 접힌 주름만 냅니다.
+*/
+.sticker-crease-0 {
+  --crease:
+    linear-gradient(172deg, transparent 28%, rgba(255, 255, 255, 0.2) 35%, rgba(43, 33, 24, 0.07) 40%, transparent 47%),
+    linear-gradient(8deg, transparent 58%, rgba(43, 33, 24, 0.06) 63%, rgba(255, 255, 255, 0.16) 67%, transparent 73%),
+    radial-gradient(ellipse 60% 40% at 30% 25%, rgba(255, 255, 255, 0.18), transparent 70%);
+}
+.sticker-crease-1 {
+  --crease:
+    linear-gradient(112deg, transparent 15%, rgba(255, 255, 255, 0.18) 22%, rgba(43, 33, 24, 0.05) 27%, transparent 33%),
+    linear-gradient(100deg, transparent 56%, rgba(43, 33, 24, 0.07) 61%, rgba(255, 255, 255, 0.15) 65%, transparent 71%),
+    radial-gradient(ellipse 50% 60% at 75% 70%, rgba(43, 33, 24, 0.06), transparent 70%);
+}
+.sticker-crease-2 {
+  --crease:
+    linear-gradient(158deg, transparent 40%, rgba(43, 33, 24, 0.08) 46%, rgba(255, 255, 255, 0.18) 51%, transparent 58%),
+    linear-gradient(62deg, transparent 68%, rgba(255, 255, 255, 0.14) 73%, transparent 79%),
+    radial-gradient(ellipse 55% 40% at 25% 20%, rgba(255, 255, 255, 0.14), transparent 70%);
+}
+.sticker-crease-3 {
+  --crease:
+    linear-gradient(178deg, transparent 47%, rgba(255, 255, 255, 0.2) 53%, rgba(43, 33, 24, 0.06) 58%, transparent 64%),
+    linear-gradient(174deg, transparent 15%, rgba(255, 255, 255, 0.12) 21%, transparent 28%),
+    radial-gradient(ellipse 50% 50% at 80% 80%, rgba(43, 33, 24, 0.06), transparent 70%);
+}
+.sticker-crease-4 {
+  --crease:
+    linear-gradient(135deg, transparent 32%, rgba(255, 255, 255, 0.18) 39%, rgba(43, 33, 24, 0.07) 44%, transparent 51%),
+    linear-gradient(40deg, transparent 54%, rgba(255, 255, 255, 0.12) 59%, transparent 65%),
+    radial-gradient(ellipse 55% 45% at 70% 25%, rgba(255, 255, 255, 0.16), transparent 70%);
+}
+/*
+ * 마우스를 올릴 때 움직임도 스티커마다 다르게 둡니다. 다섯 장이 같이 들썩이면 규칙이 보여 기계적으로 읽혀서,
+ * 종이 스티커가 실제로 할 법한 움직임(들림·모서리 들뜸·둘레 회전·눌림·핀에 매달려 흔들림)을 하나씩 나눠 줍니다.
+ * 기울기·자리는 Tailwind의 rotate·translate 속성이 맡고 있어, 여기서는 겹치지 않게 transform만 씁니다.
+ */
+/* 들림: 앨범에서 살짝 떼어 든 것처럼 위로, 그림자는 길게 */
+.sticker-motion-lift:hover {
+  transform: translateY(-4px) rotate(-3deg);
+  box-shadow: 0 4px 6px rgba(43, 33, 24, 0.18), 0 8px 8px rgba(43, 33, 24, 0.08);
+}
+/* 모서리 들뜸: 풀이 덜 묻은 오른쪽 아래 모서리가 들려 올라옵니다 */
+.sticker-motion-peel {
+  transform-origin: 20% 20%;
+}
+.sticker-motion-peel:hover {
+  transform: perspective(320px) rotateX(10deg) rotateY(-14deg);
+  box-shadow: 3px 4px 6px rgba(43, 33, 24, 0.2), 0 2px 5px rgba(43, 33, 24, 0.08);
+}
+/* 둘레 회전: 스티커는 그대로, 가장자리 글씨만 한 바퀴 돕니다 */
+.sticker-motion-spin svg {
+  transition: rotate 2.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.sticker-motion-spin:hover svg {
+  rotate: 360deg;
+}
+/* 눌림: 손가락으로 꾹 눌러 붙이는 것처럼 작아지고 그림자가 납작해집니다 */
+.sticker-motion-press:hover {
+  transform: scale(0.95);
+  box-shadow: 0 0.5px 1px rgba(43, 33, 24, 0.25);
+}
+/* 핀에 매달려 흔들림: 위쪽 한 점을 축으로 진폭이 줄어들며 멈춥니다(튀지 않게 넘침 없이) */
+.sticker-motion-swing {
+  transform-origin: 50% 0;
+}
+.sticker-motion-swing:hover {
+  animation: sticker-swing 1.1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes sticker-swing {
+  0% { transform: rotate(0deg); }
+  20% { transform: rotate(9deg); }
+  45% { transform: rotate(-5deg); }
+  70% { transform: rotate(2deg); }
+  100% { transform: rotate(0deg); }
+}
+
+/*
+ * 히어로 뒤 찢은 크라프트지 사진. 다크모드(스탠드 불빛만 남은 방)에서는 밝은 종이가 혼자 떠 보이지 않게
+ * 빛을 덜 받은 것처럼 어둡게 누릅니다. 테마를 바꿀 때 다른 색들과 함께 서서히 바뀌게 같은 시간을 줍니다.
+ */
+.kraft-photo {
+  transition:
+    filter 0.6s ease,
+    opacity 0.6s ease;
+}
+/* 어둡게만 누르면 찢긴 밝은 단면이 윤곽선처럼 남아서, 반쯤 비치게 해 바탕에 스며든 듯 은은하게 둡니다. */
+html[data-theme="dark"] .kraft-photo {
+  filter: brightness(0.2) saturate(0.6);
+  opacity: 0.5;
+}
+
+/* 둘레 글씨: 앨범 라벨과 같은 타자기체를 아주 작게. 소품 글씨라 13px 하한의 예외입니다. */
+.sticker-ring-text {
+  font-family: var(--font-typewriter), monospace;
+  font-size: 6.2px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+}
+
+/*
+  홈 '색 골라 보기'(ColorTryOn)의 모양 태그와 색 동그라미.
+  고른 것만 먹색으로 채우거나 테두리를 둘러, 지금 무엇이 골라져 있는지 한눈에 보이게 합니다.
+*/
+.try-swatch {
+  border: 1px solid transparent;
+  transition: border-color 0.25s ease, scale 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.try-swatch:hover {
+  scale: 1.08;
+}
+/* 고르기 판은 다크모드에서도 흰 종이라, 고른 색 테두리도 테마 잉크가 아니라 종이 위 먹색으로 둡니다. */
+.try-swatch[aria-pressed="true"] {
+  border-color: var(--color-paper-ink);
+}
+
+/* 색 골라 보기의 3D 캔들: 첫 장면이 그려지면 아래에서 살짝 떠오르며 나타납니다. */
+.try-3d {
+  opacity: 0;
+  translate: 0 12px;
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    translate 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.try-3d.is-ready {
+  opacity: 1;
+  translate: 0 0;
+}
+
+/* 판 오른쪽 위 '캔들 보러 가기'. 흰 판 위라 테마와 상관없이 먹색 테두리입니다. */
+.try-go {
+  border: 1px solid var(--color-paper-ink);
+  color: var(--color-paper-ink);
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+.try-go:hover {
+  background: var(--color-paper-ink);
+  color: #ffffff;
+}
+.try-swatch:focus-visible,
+.try-go:focus-visible {
+  outline: 2px solid var(--color-sage);
+  outline-offset: 2px;
+}
+
+/* 입장권: 양옆에 반원 홈을 판 티켓 */
+.ticket-stub {
+  -webkit-mask: radial-gradient(circle at 0 50%, transparent 0.42rem, #000 0.45rem) left / 51% 100% no-repeat,
+    radial-gradient(circle at 100% 50%, transparent 0.42rem, #000 0.45rem) right / 51% 100% no-repeat;
+  mask: radial-gradient(circle at 0 50%, transparent 0.42rem, #000 0.45rem) left / 51% 100% no-repeat,
+    radial-gradient(circle at 100% 50%, transparent 0.42rem, #000 0.45rem) right / 51% 100% no-repeat;
+}
+
+/* 펜으로 그리듯 선이 이어지는 효과(pathLength=1인 path에 붙입니다) */
+@keyframes draw {
   from {
-    clip-path: inset(0 0 100% 0);
+    stroke-dashoffset: 1;
   }
   to {
-    clip-path: inset(0 0 0 0);
+    stroke-dashoffset: 0;
   }
 }
 
-@keyframes hero-settle {
-  from {
-    transform: scale(1.12) translateY(-2.5%);
-  }
-  to {
-    transform: scale(1) translateY(0);
+.animate-draw {
+  stroke-dasharray: 1;
+  animation: draw 0.9s ease-out both;
+}
+
+/* 픽셀 스티커가 둥실 떠 있는 효과 */
+@keyframes bob {
+  50% {
+    transform: translateY(-4px);
   }
 }
 
-@media (max-width: 767px) {
-  .hero-fill {
-    animation: hero-drop 1s cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
-  .hero-fill img {
-    animation: hero-settle 1.5s cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
+.animate-bob {
+  animation: bob 3.2s ease-in-out infinite;
 }
 
 @keyframes fade-up {
@@ -142,19 +658,403 @@ body {
   animation: fade-up 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+/*
+  히어로 워드마크는 i 자리 불꽃에서 가까운 글자부터 어둠 속에서 밝아집니다(순서는 HeroCollage의 lightDelay).
+  빛이 비춰 보이게 되는 것이라 글자는 제자리에 있고 움직이지 않습니다. 흐림과 투명도만 풀립니다.
+*/
+@keyframes letter-in {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+.animate-letter {
+  display: inline-block;
+  animation: letter-in 0.95s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/*
+  모션 로고: 'evening'의 i 점 자리 불꽃.
+  글자가 다 떠오른 뒤 한 번 톡 켜지고(ignite), 그 뒤로는 가만히 있습니다.
+*/
+@keyframes flame-ignite {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.15);
+  }
+  55% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.15);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+}
+
+.flame-ignite {
+  transform-origin: 50% 100%;
+  animation: flame-ignite 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/*
+  워드마크 뒤 둥근 빛: 불꽃이 켜질 때 함께 번지고(glow-in), 이후 촛불처럼 일렁입니다(glow-flicker).
+  위치는 HeroCollage에서 불꽃 자리(em 단위)에 맞춥니다.
+*/
+@keyframes glow-in {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* 촛불처럼 고르지 않게 밝기·크기·위치가 살짝씩 흔들립니다. */
+@keyframes glow-flicker {
+  0%,
+  100% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  12% {
+    opacity: 0.82;
+    transform: translate(1.5%, -1%) scale(0.97);
+  }
+  27% {
+    opacity: 0.95;
+    transform: translate(-1%, 0.5%) scale(1.03);
+  }
+  41% {
+    opacity: 0.72;
+    transform: translate(1%, 1.5%) scale(0.95);
+  }
+  58% {
+    opacity: 1;
+    transform: translate(-1.5%, -0.5%) scale(1.05);
+  }
+  73% {
+    opacity: 0.85;
+    transform: translate(0.5%, -1.5%) scale(0.98);
+  }
+  86% {
+    opacity: 0.93;
+    transform: translate(-0.5%, 1%) scale(1.02);
+  }
+}
+
+.wordmark-glow {
+  pointer-events: none;
+  animation: glow-in 1.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* 일렁이는 효과는 안쪽 층이 맡아 켜지는 효과(바깥 층)와 겹치지 않게 합니다. */
+.wordmark-glow::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle,
+    rgba(255, 210, 140, 0.55) 0%,
+    rgba(250, 222, 176, 0.32) 35%,
+    rgba(250, 230, 200, 0) 70%
+  );
+  animation: glow-flicker 3.6s ease-in-out infinite;
+}
+
+/*
+  라이트 모드 = 불 켜진 방이라 촛불은 꺼둡니다(심지만 남음). 다크 모드에서 불을 끄면 촛불이 켜집니다.
+  불꽃·글자 뒤 빛은 scale 속성으로 줄였다 키워서, transform을 쓰는 켜짐·일렁임 애니메이션과 겹치지 않게 합니다.
+*/
+.flame-light {
+  transform-origin: 50% 100%;
+  transition:
+    opacity 0.5s ease,
+    scale 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.wordmark-glow {
+  transition: scale 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+html:not([data-theme="dark"]) .flame-light {
+  opacity: 0;
+  scale: 0.2;
+}
+html:not([data-theme="dark"]) .wordmark-glow {
+  scale: 0;
+}
+
+/*
+  히어로 등장 순서(모바일·데스크톱 공통): 콜라주가 내려앉기 시작하면 곧이어 인사말이 떠오릅니다.
+  첫 화면의 로고와 버튼이 늦게 보이지 않도록 지연은 짧게 둡니다.
+*/
+.hero-intro {
+  --intro-delay: 350ms;
+}
+.hero-intro .animate-fade-up {
+  animation-duration: 1.25s;
+}
+.hero-intro .animate-letter {
+  animation-duration: 1.2s;
+}
+
+/*
+  스크롤로 화면에 들어올 때 떠오르는 블록 (Reveal 컴포넌트가 붙입니다).
+  히어로 워드마크처럼 흐릿한 상태에서 천천히 또렷해집니다.
+*/
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  filter: blur(10px);
+  transition:
+    opacity 1.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 1.7s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 1.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+  filter: blur(0);
+}
+
+/* 자바스크립트가 없으면 등장 효과 없이 바로 보여줍니다. */
+@media (scripting: none) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
-  .animate-fade-up {
+  .try-3d {
+    translate: none;
+    transition: opacity 0.3s ease;
+  }
+  .sticker,
+  .sticker svg,
+  .try-swatch {
+    transition: none;
+  }
+  /* 움직임을 줄인 사용자에게는 스티커가 제자리에 붙어 있게 둡니다(그림자 변화만 남김). */
+  .sticker:hover {
+    transform: none;
+    animation: none;
+  }
+  /* rotate는 스티커 자체의 기울기(Tailwind)도 맡고 있어 둘레 글씨 svg에만 끕니다. */
+  .sticker:hover svg {
+    rotate: none;
+  }
+  .animate-fade-up,
+  .animate-letter,
+  .animate-collage-in,
+  .animate-draw,
+  .animate-bob {
     animation: none;
     opacity: 1;
     transform: none;
+    filter: none;
   }
-  .hero-fill,
-  .hero-fill img {
-    animation: none;
-    clip-path: none;
+  .reveal {
+    opacity: 1;
     transform: none;
+    filter: none;
+    transition: none;
+  }
+}
+
+/* 동작 줄이기: 부제는 처음부터 다 찍혀 있고 깜박이는 커서도 두지 않습니다. */
+@media (prefers-reduced-motion: reduce) {
+  .type-char {
+    animation: none;
+  }
+  .type-char::after {
+    content: none;
+  }
+}
+
+/* 동작 줄이기: 불꽃은 켜진 채로 가만히 둡니다. */
+@media (prefers-reduced-motion: reduce) {
+  .flame-ignite {
+    animation: none;
+    opacity: 1;
+    transform: translateX(-50%);
+  }
+}
+
+/* 동작 줄이기: 글자 뒤 빛은 켜진 채로 가만히 둡니다. */
+@media (prefers-reduced-motion: reduce) {
+  .wordmark-glow {
+    animation: none;
+    opacity: 1;
+  }
+  .wordmark-glow::before {
+    animation: none;
+  }
+}
+
+/*
+  불 끄기(다크모드) — 모바일·데스크톱 모두 적용합니다.
+  html[data-theme="dark"]는 헤더의 '불 끄기' 버튼이 붙이고, layout.tsx의 작은 스크립트가 다음 방문에도 복원합니다.
+  대부분 색 변수만 바꾸면 따라오고, 색을 직접 쓴 곳만 아래에서 따로 맞춥니다.
+*/
+html[data-theme="dark"] {
+  color-scheme: dark;
+  /* 스탠드 불빛만 남은 방: 바탕을 거의 검정까지 낮춰 불꽃·빛이 더 또렷하게 보이게 합니다. 띠는 바탕과 구분될 만큼만 밝게. */
+  --color-cream: #070605;
+  --color-beige: #110d0a;
+  --color-sand: #3d3329;
+  --color-sage: #9fb39f;
+  --color-sage-dark: #b7c8b6;
+  --color-brown: #d4bea2;
+  --color-text: #ebe3d5;
+  --color-muted: #b0a28e;
+  --color-ink: #f3ebdc;
+  /* 스탠드 불빛 아래의 종이: 인화지·메모지를 살짝 어둡게 */
+  --color-photo: #d9cfbd;
+}
+
+/* 밝아진 ink 바탕 위 글씨는 어둡게 */
+html[data-theme="dark"] .btn-solid {
+  color: var(--color-cream);
+}
+html[data-theme="dark"] .btn-outline:hover {
+  color: var(--color-cream);
+}
+
+/* 갈색 손글씨 그림은 반전해 어두운 바탕에서 따뜻한 밝은 색으로 보이게 합니다. */
+html[data-theme="dark"] .ink-art {
+  filter: invert(1) hue-rotate(180deg) brightness(1.05);
+}
+html[data-theme="dark"] .choose-ink {
+  color: #dcc0ac !important;
+}
+
+/*
+  히어로 콜라주 사진만 낮춥니다(아래쪽 제품 사진은 그대로).
+  빈티지 사진은 원래 색감 필터에 밝기만 더하고, 손글씨 메모 그림은 종이 위라 건드리지 않습니다.
+*/
+html[data-theme="dark"] section:has(.hero-intro) img:not([src*="note-calligraphy"]) {
+  filter: brightness(0.74) saturate(0.92);
+}
+html[data-theme="dark"] section:has(.hero-intro) .vintage-photo img {
+  filter: sepia(0.32) saturate(0.78) contrast(1.06) brightness(0.72);
+}
+
+/*
+  불빛 페더: 다크모드에서는 빛이 더 넓고 부드럽게 번지도록
+  색이 빠지는 단계를 늘리고 가장자리를 흐립니다.
+*/
+html[data-theme="dark"] .wordmark-glow::before {
+  inset: -30%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 204, 128, 0.42) 0%,
+    rgba(255, 190, 112, 0.26) 22%,
+    rgba(240, 168, 98, 0.13) 45%,
+    rgba(220, 150, 90, 0.05) 62%,
+    rgba(220, 150, 90, 0) 75%
+  );
+  filter: blur(18px);
+}
+
+/*
+  다크모드 토글 스위치(ThemeToggle) — 히어로 섹션 안, 데스크톱은 오른쪽 위·모바일은 오른쪽 아래에 붙어 있습니다.
+  화면에 고정하지 않아 스크롤해 히어로를 벗어나면 함께 사라집니다.
+  꺼짐(라이트): 밝은 바탕에 흰 손잡이가 왼쪽. 켜짐(다크): 밝은 크림 바탕에 어두운 손잡이가 오른쪽.
+*/
+.theme-switch {
+  position: absolute;
+  right: 1.25rem;
+  top: 1.25rem;
+  z-index: 50;
+  width: 3rem;
+  height: 1.75rem;
+  padding: 3px;
+  border-radius: 9999px;
+  background: rgba(30, 27, 23, 0.18);
+  border: 1px solid rgba(30, 27, 23, 0.12);
+  box-shadow: 0 6px 16px rgba(30, 27, 23, 0.18);
+  backdrop-filter: blur(6px);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.theme-switch-knob {
+  display: block;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 9999px;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(30, 27, 23, 0.3);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.3s ease;
+}
+
+.theme-switch[aria-checked="true"] {
+  background: var(--color-ink);
+  border-color: transparent;
+}
+
+.theme-switch[aria-checked="true"] .theme-switch-knob {
+  transform: translateX(1.25rem);
+  background: var(--color-deep);
+}
+
+.theme-switch:focus-visible {
+  outline: 2px solid var(--color-sage);
+  outline-offset: 2px;
+}
+
+/* 버튼을 누른 순간에만 색이 천천히 바뀌게 합니다(불이 서서히 꺼지는 느낌). */
+html.theme-fading,
+html.theme-fading * {
+  transition:
+    background-color 0.6s ease,
+    color 0.6s ease,
+    border-color 0.6s ease,
+    filter 0.6s ease,
+    opacity 0.5s ease,
+    scale 0.8s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+/*
+  모바일 히어로(767px 이하): 콜라주를 위에, 글자를 아래에 두고 타이틀·서브타이틀·버튼과 간격을 줄여 한 화면에 다 보이게 합니다.
+  (데스크톱 크기는 HeroCollage의 기본값 그대로)
+*/
+@media (max-width: 767px) {
+  /* 콜라주를 위로, 글자를 아래로(코드 순서는 글자→콜라주라 거꾸로 쌓습니다). */
+  .hero-stack {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+  .hero-intro {
+    /* 데스크톱(24cqi)과 같은 비율로, 자간을 좁힌 만큼 키웠습니다. */
+    --hero-title-size: 15cqi;
+    --hero-subtitle-size: var(--text-small);
+    margin-bottom: 0;
+    /* 콜라주 바로 밑에 붙여 타이틀이 한 화면 안에서 조금 더 위에 오게 합니다. */
+    margin-top: 0.25rem;
+  }
+  .hero-intro h1 {
+    margin-bottom: 0.75rem;
+  }
+  .hero-intro .hero-subtitle {
+    margin-bottom: 1rem;
+  }
+  /* 모바일: 다크모드 토글은 엄지가 닿기 쉬운 히어로 오른쪽 아래로. */
+  .theme-switch {
+    top: auto;
+    bottom: 1.25rem;
   }
 }
