@@ -175,7 +175,7 @@ export default function Home() {
                 직접 쓴 캘리그래피라 폰트 대신 이미지로 넣습니다(배경은 투명).
                 한 장으로 쓰면 짧은 첫 줄 '나만의'가 왼쪽에 붙어 오른쪽이 비어 보여서, 줄마다 잘라 둔 그림을
                 각각 가운데에 맞춰 쌓습니다. 폭(%)은 원본(1096px)에서 각 줄이 차지하던 너비라 두 줄 글씨 크기가 같게 유지됩니다.
-                붓 획이 가늘어 띠 위에서 약해 보여서, 두 그림 모두 획을 바깥으로 8px씩 넓혀 굵게 구웠습니다(그만큼 그림도 16px씩 커짐).
+                붓 획이 가늘어 띠 위에서 약해 보여서, 두 그림 모두 획을 바깥으로 4px씩 넓혀 살짝 굵게 구웠습니다(그만큼 그림도 8px씩 커짐). 8px은 붓 느낌이 뭉개질 만큼 무거웠습니다.
                 h2의 이름은 aria-label로 한 번에 읽히게 하고, 그림 두 장은 장식으로 숨깁니다.
               */}
               {/* 제목과 스티커를 한 상자에 묶어 스티커 자리를 제목 기준으로 잡습니다(@container: 스티커 글씨도 이 폭을 따라 커짐). */}
@@ -184,17 +184,17 @@ export default function Home() {
                 <Image
                   src="/brand/choose-headline-1.png"
                   alt=""
-                  width={573}
-                  height={210}
-                  className="ink-art w-[52.3%] h-auto"
+                  width={565}
+                  height={202}
+                  className="ink-art w-[51.6%] h-auto"
                   sizes="(max-width: 767px) 46vw, 275px"
                 />
                 <Image
                   src="/brand/choose-headline-2.png"
                   alt=""
-                  width={976}
-                  height={289}
-                  className="ink-art w-[89%] h-auto"
+                  width={968}
+                  height={281}
+                  className="ink-art w-[88.3%] h-auto"
                   sizes="(max-width: 767px) 79vw, 473px"
                 />
               </h2>
