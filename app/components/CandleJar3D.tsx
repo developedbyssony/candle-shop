@@ -143,9 +143,9 @@ export default function CandleJar3D({
     renderer.domElement.style.display = "block";
     renderer.domElement.style.width = "100%";
     renderer.domElement.style.height = "100%";
-    // 위아래로 끌어 아랫면까지 돌려 보게 해서, 캔들 위에서는 손가락 끌기를 페이지 스크롤 대신 돌리기에 씁니다.
-    // (무대 위아래 글자·색 줄 자리에서는 그대로 스크롤됩니다.)
-    renderer.domElement.style.touchAction = "none";
+    // 무대가 한 화면을 다 차지해서, 캔들 위 손가락 끌기를 다 가져가면 모바일에서 페이지가 내려가지 않습니다.
+    // 그래서 세로 끌기는 브라우저 스크롤에 맡기고(pan-y), 가로 끌기만 돌리기에 씁니다. 위아래 기울이기는 마우스에서만 합니다.
+    renderer.domElement.style.touchAction = "pan-y";
     renderer.domElement.style.cursor = "grab";
     renderer.domElement.style.userSelect = "none";
     host.appendChild(renderer.domElement);
@@ -351,8 +351,8 @@ export default function CandleJar3D({
       lastY = e.clientY;
       lastMove = dx * 0.01;
       spin.rotation.y += lastMove;
-      // 위로 끌면 위쪽이 뒤로 넘어가 아랫면이 보입니다.
-      tilt = THREE.MathUtils.clamp(tilt + dy * 0.01, -MAX_TILT, MAX_TILT);
+      // 위로 끌면 위쪽이 뒤로 넘어가 아랫면이 보입니다. 터치의 세로 끌기는 스크롤이라 마우스에서만 기울입니다.
+      if (e.pointerType === "mouse") tilt = THREE.MathUtils.clamp(tilt + dy * 0.01, -MAX_TILT, MAX_TILT);
       requestFrame();
     };
     const onUp = () => {

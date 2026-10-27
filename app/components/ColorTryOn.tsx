@@ -115,12 +115,12 @@ export default function ColorTryOn({
               </div>
             </div>
             <p className="text-center text-[13px] mb-2" style={{ color: INK_SOFT }}>
-              끌어서 이리저리 돌려 보세요. 위로 올리면 아랫면도 보여요
+              끌어서 이리저리 돌려 보세요
             </p>
           </div>
 
-          {/* ── 고르기 줄: 색 동그라미 ── */}
-          <div className="border-t px-4 pt-6 pb-8 md:pt-7 md:pb-10" style={{ borderColor: "rgba(43,33,24,0.1)" }}>
+          {/* ── 고르기 줄: 색 동그라미. 안내 문구 바로 밑이라 구분선 없이 여백으로만 나눕니다. ── */}
+          <div className="px-4 pt-6 pb-8 md:pt-7 md:pb-10">
             {/*
               색 동그라미는 한 줄로 늘어놓고, 고른 색 이름은 그 동그라미 바로 밑에만 띄웁니다.
               이름을 절대 위치로 띄워 색을 바꿔도 줄이 들썩이지 않게 하고, 그 자리만큼 아래 여백을 둡니다.

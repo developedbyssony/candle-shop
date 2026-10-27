@@ -16,7 +16,7 @@ export default function Footer() {
           <div className="md:col-span-5">
             <p className="font-display text-lg text-white mb-4">evening candle</p>
             <p className="text-[13px] leading-relaxed max-w-xs">
-              숲과 린넨, 늦은 오후의 햇살에서 영감을 받은 핸드메이드 소이 캔들.
+              하루의 끝에, 나를 위한 작은 빛. 손으로 하나씩 굳혀 만드는 소이 캔들.
             </p>
           </div>
 

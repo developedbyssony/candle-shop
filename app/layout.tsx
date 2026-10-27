@@ -21,6 +21,15 @@ const specialElite = Special_Elite({
 export const metadata: Metadata = {
   title: "Evening Candle",
   description: "자연에서 온 핸드메이드 소이 캔들",
+  // 링크를 카톡 등에 붙였을 때 뜨는 미리보기 글. 썸네일은 app/opengraph-image.jpg(scripts/make-og-image.js로 구움)를
+  // Next가 알아서 붙입니다. 카톡은 og 태그를 먼저 읽으므로 한 줄 소개를 여기에 둡니다.
+  openGraph: {
+    title: "evening candle",
+    description: "하루의 끝에, 나를 위한 작은 빛 · 수제 소이 캔들",
+    siteName: "evening candle",
+    locale: "ko_KR",
+    type: "website",
+  },
 };
 
 export default function RootLayout({

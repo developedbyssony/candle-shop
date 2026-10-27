@@ -1,11 +1,9 @@
-import Link from "next/link";
 import Image from "next/image";
 import { products } from "@/app/data/products";
 import type { Product } from "@/app/context/CartContext";
 import HeroCollage from "@/app/components/HeroCollage";
 import Reveal from "@/app/components/Reveal";
 import Footer from "@/app/components/Footer";
-import TicketStub from "@/app/components/TicketStub";
 import ScrollFx from "@/app/components/ScrollFx";
 import Sticker from "@/app/components/Sticker";
 import ColorTryOn from "@/app/components/ColorTryOn";
@@ -15,7 +13,7 @@ const IMG = {
   morningMatch: "/home/morning-match.webp",
 };
 
-// '나만의 캔들 고르기' 손글씨(/public/brand/choose-headline.png)의 붓 색.
+// '나만의 캔들 고르기' 손글씨(/public/brand/choose-headline-1·2.png)의 붓 색.
 const CHOOSE_INK = "rgb(97, 60, 42)";
 
 const byId = (id: number) => products.find((product) => product.id === id) as Product;
@@ -57,10 +55,11 @@ const productPhoto = (id: number): OccasionPhoto => {
   이런 날에 어울리는 캔들. 상황마다 어울리는 상품 하나를 붙입니다.
   상품 목록에 아직 없는 캔들은 사진을 따로 둡니다(흰 바탕을 순백으로 맞춰 정사각형으로 만든 webp).
 */
-const OCCASIONS: { label: string; photo: OccasionPhoto }[] = [
+const OCCASIONS: { label: string; href: string; photo: OccasionPhoto }[] = [
   // 생일 선물은 치즈를 문 햄스터 캔들. 상품 목록에 아직 없어 사진을 따로 둡니다(흰 바탕 정사각형 webp).
   {
     label: "생일 선물",
+    href: "https://smartstore.naver.com/eveningcandle/products/13804448253",
     photo: {
       src: "/home/hamster-candle.webp",
       name: "치즈 문 햄스터",
@@ -69,10 +68,12 @@ const OCCASIONS: { label: string; photo: OccasionPhoto }[] = [
     },
   },
   // 숲속 부엉이(2)는 바로 위 오브제 캔들 사진과 겹쳐서, 어느 집에나 어울리는 단정한 리본 볼(13)로 둡니다.
-  { label: "집들이", photo: productPhoto(13) },
+  { label: "집들이",
+    href: "https://smartstore.naver.com/eveningcandle/products/13726396031", photo: productPhoto(13) },
   // 고마운 마음은 구슬 네 개를 네잎처럼 붙인 버블 캔들(아이보리·핑크 두 개).
   {
     label: "고마운 마음",
+    href: "https://smartstore.naver.com/eveningcandle/products/13804474746",
     photo: {
       src: "/home/clover-bubble-candle.webp",
       name: "네잎 버블",
@@ -80,11 +81,14 @@ const OCCASIONS: { label: string; photo: OccasionPhoto }[] = [
       background: "#ffffff",
     },
   },
-  { label: "나를 위한 저녁", photo: productPhoto(1) },
-  { label: "기념일", photo: productPhoto(5) },
+  { label: "나를 위한 저녁",
+    href: "https://smartstore.naver.com/eveningcandle/products/13722073684", photo: productPhoto(1) },
+  { label: "기념일",
+    href: "https://smartstore.naver.com/eveningcandle/products/13725043036", photo: productPhoto(5) },
   // 심지가 있는 유령 캔들이라 '불 없이 향기만'은 맞지 않아, 유령이 어울리는 날로 이름을 바꿨습니다.
   {
     label: "할로윈 파티",
+    href: "https://smartstore.naver.com/eveningcandle/products/13804391090",
     photo: {
       src: "/home/ghost-candle.webp",
       name: "꼬마 유령",
@@ -124,7 +128,8 @@ const OCCASION_PLACEMENT = [
 /*
   '나만의 캔들 고르기' 제목 아래 풀로 붙인 종이 스티커 줄(동그라미·둘레 글씨 동그라미·둥근 네모·가로 네모).
   문구는 사이트 다른 곳에 이미 적힌 사실만 영문으로 옮겨 씁니다
-  (손으로 빚은 캔들, 소이 왁스, 안전기준확인 마크, 카카오 상담의 선물 포장 안내, 입장권의 저녁 7시).
+  (손으로 빚은 캔들, 소이 왁스, 안전기준확인 마크, 카카오 상담의 선물 포장 안내, 저녁 7시).
+  입장권은 뺐지만 '7 PM'은 브랜드가 정한 "저녁 7시 불 켜는 시간"이라 스티커로 남겨 둡니다.
   색은 오래된 인쇄물처럼 채도를 살짝 눌렀고, 기울기·높이·크기·구김(crease)은 하나씩 따로 줘
   같은 틀로 찍은 듯 보이지 않게 합니다.
 */
@@ -161,19 +166,27 @@ export default function Home() {
               </p>
               {/*
                 직접 쓴 캘리그래피라 폰트 대신 이미지로 넣습니다(배경은 투명).
-                alt에 문구를 그대로 담아 검색엔진과 스크린리더에도 읽히게 합니다.
-                입장권은 첫 줄 '나만의' 오른쪽 빈자리(그림 너비의 55%, 위에서 3%)에 붙입니다.
+                한 장으로 쓰면 짧은 첫 줄 '나만의'가 왼쪽에 붙어 오른쪽이 비어 보여서, 줄마다 잘라 둔 그림을
+                각각 가운데에 맞춰 쌓습니다. 폭(%)은 원본(1096px)에서 각 줄이 차지하던 너비라 두 줄 글씨 크기가 같게 유지됩니다.
+                h2의 이름은 aria-label로 한 번에 읽히게 하고, 그림 두 장은 장식으로 숨깁니다.
               */}
-              <h2 className="relative w-full max-w-[540px] mx-auto">
+              <h2 aria-label="나만의 캔들 고르기" className="w-full max-w-[540px] mx-auto flex flex-col items-center">
                 <Image
-                  src="/brand/choose-headline.png"
-                  alt="나만의 캔들 고르기"
-                  width={1096}
-                  height={486}
-                  className="ink-art w-full h-auto"
-                  sizes="(max-width: 767px) 90vw, 540px"
+                  src="/brand/choose-headline-1.png"
+                  alt=""
+                  width={557}
+                  height={194}
+                  className="ink-art w-[50.8%] h-auto"
+                  sizes="(max-width: 767px) 46vw, 275px"
                 />
-                <TicketStub className="!absolute left-[55%] top-[3%] origin-top-left scale-[0.8] md:scale-100" />
+                <Image
+                  src="/brand/choose-headline-2.png"
+                  alt=""
+                  width={960}
+                  height={273}
+                  className="ink-art w-[87.6%] h-auto mt-[1.5%]"
+                  sizes="(max-width: 767px) 79vw, 473px"
+                />
               </h2>
               {/* 제목 아래 크라프트지 띠 위에 붙인 종이 스티커 줄 */}
               <ul
@@ -212,12 +225,9 @@ export default function Home() {
                   className="grid grid-cols-1 md:grid-cols-2 gap-9 md:gap-16 items-center"
                 >
                   {/* 이 섹션의 주인공 소품은 즉석 사진 하나입니다. PC에서는 사진과 글을 좌우로 번갈아 둡니다. */}
-                  <Link
-                    href="/products"
-                    className={`group block mx-auto ${place.size} ${place.tilt} ${place.nudge} ${flip ? "md:order-2" : ""}`}
-                    aria-label={`${title} 보러 가기`}
-                  >
-                    <div className="snapshot group-hover:-translate-y-1.5">
+                  {/* 갈 곳이 없는 사진이라 링크 없이 붙여만 둡니다(누를 수 있어 보이지 않게 들썩임·확대도 뺐습니다). */}
+                  <div className={`block mx-auto ${place.size} ${place.tilt} ${place.nudge} ${flip ? "md:order-2" : ""}`}>
+                    <div className="snapshot">
                       <div
                         className="relative aspect-[4/5] w-full overflow-hidden"
                         style={{ background: photoBackground(product) }}
@@ -226,14 +236,14 @@ export default function Home() {
                           src={product.image}
                           alt={product.name}
                           fill
-                          className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+                          className="object-cover"
                           sizes="(max-width: 768px) 88vw, 460px"
                         />
                       </div>
                       <p className="snapshot-caption text-[13px] font-semibold">{product.name}</p>
                       {place.tape && <span aria-hidden className={`masking-tape ${place.tape}`} />}
                     </div>
-                  </Link>
+                  </div>
                   <div>
                     <h3
                       className="headline mb-5"
@@ -268,13 +278,15 @@ export default function Home() {
           </div>
 
           <div data-stagger className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-8 md:gap-x-10 md:gap-y-14">
-            {OCCASIONS.map(({ label, photo }, i) => {
+            {OCCASIONS.map(({ label, href, photo }, i) => {
               const place = OCCASION_PLACEMENT[i];
               return (
-                <Link
+                <a
                   key={label}
-                  // 상세 페이지를 없애서, 고른 날에 어울리는 캔들은 전체 상품 목록에서 바로 담습니다.
-                  href="/products"
+                  // 그날에 어울리는 캔들의 스마트스토어 상품 페이지. 다른 사이트라 새 탭으로 엽니다.
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className={`group block ${place.tilt} ${place.nudge}`}
                 >
                   <div className="snapshot group-hover:-translate-y-1.5">
@@ -302,7 +314,7 @@ export default function Home() {
                     </div>
                     {place.tape && <span aria-hidden className={`masking-tape ${place.tape}`} />}
                   </div>
-                </Link>
+                </a>
               );
             })}
           </div>
